@@ -18,7 +18,6 @@ namespace MyApp {
         window_flags |= ImGuiWindowFlags_NoMove;
         ImGui::Begin("Settings", p_open, window_flags);
         return window_flags;
-        //testsad
     }
 
     void menuBar()
