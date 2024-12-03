@@ -188,6 +188,7 @@ int main(int, char**)
 
     glfwDestroyWindow(window);
     glfwTerminate();
-    std::cout << storage::deleteFiles("eunrfur.txt") << std::endl;
+    std::cout << storage::putFiles("e131212r.txt 12312312 123123") << std::endl;
+    std::cout << storage::getAllFiles()[0].compressFile << std::endl;
     return 0;
 }

@@ -17,13 +17,34 @@ namespace storage
         return { it, {} };
     }
 
-    string getAllFiles() {
+    static returnObject separator(string rawData) {
+        returnObject object;
+        vector<string> splitedData = split(rawData, " ");
+        object.nameFile = splitedData[0];
+        object.nameImage = splitedData[1];
+        object.compressFile = splitedData[2];
+        return object;
+    }
+
+    static vector<returnObject> objectVector(string allRawData) {
+        vector<returnObject> vectorObject;
+        vector<string> separatedData = split(allRawData, "\n");
+        for (const auto& data : separatedData) {
+            if (data != "") {
+                returnObject dataObject = separator(data);
+                vectorObject.push_back(dataObject);
+            }
+        }
+        return vectorObject;
+    }
+
+    static string getRawData() {
         ifstream fin;
         fin.open("../README.txt");
 
         if (!fin)
         {
-            return "Error, file it's taking a shit";
+            cerr << "file it's taking a shit" << endl;
         }
         string lineRead;
         string temporary;
@@ -34,6 +55,12 @@ namespace storage
         }
         fin.close();
         return temporary;
+    }
+
+    vector<returnObject> getAllFiles() {
+        string temporary = getRawData();
+        vector<returnObject> treatedTemporary = objectVector(temporary);
+        return treatedTemporary;
     }
 
     string getFiles(string nameFile)
@@ -65,7 +92,7 @@ namespace storage
             return "File name already storaged";
         }
 
-        string allFiles = getAllFiles();
+        string allFiles = getRawData();
 
         ofstream fout;
         fout.open("../README.txt");
@@ -84,7 +111,7 @@ namespace storage
 
     string deleteFiles(string nameFile)
     {
-        string allFiles = getAllFiles();
+        string allFiles = getRawData();
         string fileToDelete = getFiles(nameFile);
         if (fileToDelete == "Error: file don't exist") {
             return fileToDelete;
