@@ -179,6 +179,7 @@
     <ClInclude Include="..\..\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="..\..\backends\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="front.h" />
+    <ClInclude Include="stb_image.h" />
     <ClInclude Include="storage.h" />
   </ItemGroup>
   <ItemGroup>

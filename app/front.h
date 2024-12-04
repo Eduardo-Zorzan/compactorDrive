@@ -1,8 +1,22 @@
+#pragma once
+
 #include "imgui.h"
 #include "stdio.h"
+#include <string>
+#include <vector>
+#include <filesystem>
+#include <iostream>
+#include <GLFW/glfw3.h>
 
-#pragma once
+
+using namespace std;
+
 namespace MyApp {
+    struct FileItem {
+        string fileName;
+        ImTextureID imageTexture;
+    };
+    ImTextureID LoadImage(const string& filePath);
     ImGuiWindowFlags makepWindow();
     void menuBar();
     void adjustFont();
