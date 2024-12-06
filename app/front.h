@@ -16,8 +16,9 @@ namespace MyApp {
         string fileName;
         ImTextureID imageTexture;
     };
-    ImTextureID LoadImage(const string& filePath);
+    ImTextureID LoadImage(const string filePath);
     ImGuiWindowFlags makepWindow();
+    static void makeFiles();
     void menuBar();
     void adjustFont();
     void RenderUi();

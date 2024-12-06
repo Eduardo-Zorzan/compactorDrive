@@ -154,7 +154,6 @@ int main(int, char**)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         MyApp::RenderUi();
-        
         // Rendering
         ImGui::Render();
         int display_w, display_h;
