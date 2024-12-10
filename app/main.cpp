@@ -18,6 +18,7 @@
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 #include "front.h"
 #include "storage.h"
+#include "compacter.h"
 #include <string>
 #include <iostream>
 
@@ -187,6 +188,7 @@ int main(int, char**)
 
     glfwDestroyWindow(window);
     glfwTerminate();
-    
+    std::cout << Compactor::compactFile("hdohd3d", "C:/Users/Duduz/Downloads/asdsa.pdf");
+    std::cout << Compactor::descompactFile("hdohd3d.rar","");
     return 0;
 }

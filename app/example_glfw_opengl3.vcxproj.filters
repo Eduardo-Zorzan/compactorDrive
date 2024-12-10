@@ -17,6 +17,9 @@
     <Filter Include="sources\storage">
       <UniqueIdentifier>{7c7f355b-29ec-4090-bfa6-1c3b4bcaf3c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sources\compacter">
+      <UniqueIdentifier>{14745870-2378-4c2c-98df-fb1f8fd99592}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -49,6 +52,9 @@
     <ClCompile Include="storage.cpp">
       <Filter>sources\storage</Filter>
     </ClCompile>
+    <ClCompile Include="compacter.cpp">
+      <Filter>sources\compacter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\imconfig.h">
@@ -77,6 +83,9 @@
     </ClInclude>
     <ClInclude Include="stb_image.h">
       <Filter>sources\front</Filter>
+    </ClInclude>
+    <ClInclude Include="compacter.h">
+      <Filter>sources\compacter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

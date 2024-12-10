@@ -93,7 +93,7 @@ namespace MyApp {
        {
            ImGui::Button("Settings");
            ImGui::Button("Filter");
-
+           ImGui::Button("Upload");
            ImGui::EndMainMenuBar();
        }
     }

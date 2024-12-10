@@ -167,6 +167,7 @@
     <ClCompile Include="..\..\imgui_widgets.cpp" />
     <ClCompile Include="..\..\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="..\..\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="compacter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="front.cpp" />
     <ClCompile Include="storage.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="..\..\backends\imgui_impl_glfw.h" />
     <ClInclude Include="..\..\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="..\..\backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="compacter.h" />
     <ClInclude Include="front.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="storage.h" />
