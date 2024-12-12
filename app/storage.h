@@ -15,7 +15,7 @@ namespace storage
         string nameImage;
         string compressFile;
     };
-    static vector<string> split(const string& str, const string& delimiter);
+    vector<string> split(const string& str, const string& delimiter);
     static returnObject separator(string rawData);
     static vector<returnObject> objectVector(string allRawData);
     static string getRawData();

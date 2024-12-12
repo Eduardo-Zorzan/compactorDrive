@@ -188,7 +188,6 @@ int main(int, char**)
 
     glfwDestroyWindow(window);
     glfwTerminate();
-    std::cout << Compactor::compactFile("hdohd3d", "C:/Users/Duduz/Downloads/asdsa.pdf");
-    std::cout << Compactor::descompactFile("hdohd3d.rar","");
+    Compactor::deleteFile("C:/Users/Duduz/Downloads/674e17fa7da51a0fbed710cd.mp3");
     return 0;
 }

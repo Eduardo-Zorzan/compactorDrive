@@ -2,7 +2,7 @@
 
 namespace storage
 {
-    static vector<string> split(const string& str, const string& delimiter) {
+    vector<string> split(const string& str, const string& delimiter) {
         regex regex(delimiter);
         sregex_token_iterator it(str.begin(), str.end(), regex, -1);
         return { it, {} };
