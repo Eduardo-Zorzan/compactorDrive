@@ -1,0 +1,132 @@
+{
+  "$schema": "https://raw.githubusercontent.com/spdx/spdx-spec/v2.2.1/schemas/spdx-schema.json",
+  "spdxVersion": "SPDX-2.2",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "documentNamespace": "https://spdx.org/spdxdocs/cpr-x64-windows-1.11.1-1af02e05-e7f5-429b-bafc-d36a6313a082",
+  "name": "cpr:x64-windows@1.11.1 8da949c970d76049690996cdd99d4b51f68d95a44e57c13ae7b5cb7f8c335112",
+  "creationInfo": {
+    "creators": [
+      "Tool: vcpkg-2024-06-10-02590c430e4ed9215d27870138c2e579cc338772"
+    ],
+    "created": "2024-12-13T00:37:42Z"
+  },
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "GENERATES",
+      "relatedSpdxElement": "SPDXRef-binary"
+    },
+    {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-file-0"
+    },
+    {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-file-1"
+    },
+    {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-file-2"
+    },
+    {
+      "spdxElementId": "SPDXRef-binary",
+      "relationshipType": "GENERATED_FROM",
+      "relatedSpdxElement": "SPDXRef-port"
+    },
+    {
+      "spdxElementId": "SPDXRef-file-0",
+      "relationshipType": "CONTAINED_BY",
+      "relatedSpdxElement": "SPDXRef-port"
+    },
+    {
+      "spdxElementId": "SPDXRef-file-1",
+      "relationshipType": "CONTAINED_BY",
+      "relatedSpdxElement": "SPDXRef-port"
+    },
+    {
+      "spdxElementId": "SPDXRef-file-2",
+      "relationshipType": "CONTAINED_BY",
+      "relatedSpdxElement": "SPDXRef-port"
+    }
+  ],
+  "packages": [
+    {
+      "name": "cpr",
+      "SPDXID": "SPDXRef-port",
+      "versionInfo": "1.11.1",
+      "downloadLocation": "git+https://github.com/microsoft/vcpkg@dc36316122f82687e1e66ca48958296b16495e42",
+      "homepage": "https://github.com/libcpr/cpr",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "description": "C++ Requests is a simple wrapper around libcurl inspired by the excellent Python Requests project.",
+      "comment": "This is the port (recipe) consumed by vcpkg."
+    },
+    {
+      "name": "cpr:x64-windows",
+      "SPDXID": "SPDXRef-binary",
+      "versionInfo": "8da949c970d76049690996cdd99d4b51f68d95a44e57c13ae7b5cb7f8c335112",
+      "downloadLocation": "NONE",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "comment": "This is a binary package built by vcpkg."
+    },
+    {
+      "SPDXID": "SPDXRef-resource-1",
+      "name": "libcpr/cpr",
+      "downloadLocation": "git+https://github.com/libcpr/cpr@1.11.1",
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "checksums": [
+        {
+          "algorithm": "SHA512",
+          "checksumValue": "cde62f13b43bad143695e54f5f69dfd250be52d2f6a76ebb3fde3db1e1059eb3c2e9d62e71f4c90f98a33f0053aea7c97bf55d8a7fa8584a37298e6a1bc3b18a"
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "fileName": "./C:/Users/Duduz/AppData/Local/vcpkg/registries/git-trees/dc36316122f82687e1e66ca48958296b16495e42/disable_werror.patch",
+      "SPDXID": "SPDXRef-file-0",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "473260e8b9894e096fecf089a14dd04927f15df1db133bbdccc2cabece4930f0"
+        }
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "fileName": "./C:/Users/Duduz/AppData/Local/vcpkg/registries/git-trees/dc36316122f82687e1e66ca48958296b16495e42/portfile.cmake",
+      "SPDXID": "SPDXRef-file-1",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "391b3760b09c4569fb25ebc0f3c5210758163a123273df292600771c2e0a2e38"
+        }
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "fileName": "./C:/Users/Duduz/AppData/Local/vcpkg/registries/git-trees/dc36316122f82687e1e66ca48958296b16495e42/vcpkg.json",
+      "SPDXID": "SPDXRef-file-2",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "a0b844b0c0b0fd8a9d1089768d76b13b2286bbeca07944ccacd2415aee38c507"
+        }
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    }
+  ]
+}

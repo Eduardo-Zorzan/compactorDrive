@@ -1,5 +1,6 @@
 #include "storage.h";
 
+
 namespace storage
 {
     vector<string> split(const string& str, const string& delimiter) {

@@ -1,0 +1,89 @@
+Package: vcpkg-cmake
+Version: 2024-04-23
+Architecture: x64-windows
+Multi-Arch: same
+Abi: c1a9f67d6512a41b021013be0e67bf8a693196e03cd94fa374cc3eeaad1adec7
+Status: install ok installed
+
+Package: zlib
+Version: 1.3.1
+Depends: vcpkg-cmake
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 3b284d2a6d6cc2e393fbd8b8b058403e7a919a007591ddffac28b929518bde26
+Description: A compression library
+Status: install ok installed
+
+Package: vcpkg-cmake-config
+Version: 2024-05-23
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 122f061e62fe24854271358c773d0ee42a04b1b2ddf784ee0928317167e7ae7d
+Status: install ok installed
+
+Package: fmt
+Version: 11.0.2
+Port-Version: 1
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 228be620d68302c30f7956f8bd75b11c96368f420b9088ff03d83ae546492edd
+Description: {fmt} is an open-source formatting library providing a fast and safe alternative to C stdio and C++ iostreams.
+Status: install ok installed
+
+Package: curl
+Version: 8.11.1
+Depends: vcpkg-cmake, vcpkg-cmake-config, zlib
+Architecture: x64-windows
+Multi-Arch: same
+Abi: ac364ff0d129038fb418b093946f7554036b3eda9612ff908bf3f5fd85bde908
+Description: A library for transferring data with URLs
+Default-Features: non-http, ssl
+Status: install ok installed
+
+Package: curl
+Feature: non-http
+Architecture: x64-windows
+Multi-Arch: same
+Description: Enables protocols beyond HTTP/HTTPS/HTTP2
+Status: install ok installed
+
+Package: curl
+Feature: schannel
+Architecture: x64-windows
+Multi-Arch: same
+Description: SSL support (Secure Channel)
+Status: install ok installed
+
+Package: curl
+Feature: ssl
+Architecture: x64-windows
+Multi-Arch: same
+Description: Default SSL backend
+Status: install ok installed
+
+Package: curl
+Feature: sspi
+Architecture: x64-windows
+Multi-Arch: same
+Description: SSPI support
+Status: install ok installed
+
+Package: cpr
+Version: 1.11.1
+Depends: curl, vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 8da949c970d76049690996cdd99d4b51f68d95a44e57c13ae7b5cb7f8c335112
+Description: C++ Requests is a simple wrapper around libcurl inspired by the excellent Python Requests project.
+Default-Features: ssl
+Status: install ok installed
+
+Package: cpr
+Feature: ssl
+Depends: curl
+Architecture: x64-windows
+Multi-Arch: same
+Description: Enable SSL support
+Status: install ok installed
+

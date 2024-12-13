@@ -94,8 +94,8 @@ extern "C" {
  * all platforms.  Additionally, the Windows OpenGL header needs APIENTRY.
  */
 #ifndef APIENTRY
- #ifdef _WIN32
-  #define APIENTRY __stdcall
+ #if defined(_WIN32) && defined(APIENTRY)
+    #define APIENTRY __stdcall
  #else
   #define APIENTRY
  #endif
