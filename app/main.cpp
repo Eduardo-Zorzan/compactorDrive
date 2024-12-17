@@ -158,6 +158,7 @@ int main(int, char**)
         MyApp::RenderUi();
         // Rendering
         ImGui::Render();
+
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
         glViewport(0, 0, display_w, display_h);
@@ -175,7 +176,7 @@ int main(int, char**)
             ImGui::RenderPlatformWindowsDefault();
             glfwMakeContextCurrent(backup_current_context);
         }
-
+        MyApp::freeTexture();
         glfwSwapBuffers(window);
     }
 #ifdef __EMSCRIPTEN__
@@ -186,7 +187,6 @@ int main(int, char**)
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-
     glfwDestroyWindow(window);
     glfwTerminate();
     return 0;

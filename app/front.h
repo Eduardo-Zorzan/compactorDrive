@@ -21,6 +21,7 @@ namespace MyApp {
     static void makeFiles();
     void menuBar();
     void adjustFont();
+    void freeTexture();
     void RenderUi();
 }
 

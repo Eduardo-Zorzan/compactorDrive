@@ -8,14 +8,14 @@ using namespace std;
 using namespace storage;
 
 namespace MyApp {
-
+    vector<GLuint> textureDelete;
     ImTextureID LoadImage(const string fileName) {
         const string& filePath = "../images/" + fileName;
         int width, height, channels;
         unsigned char* data = stbi_load(filePath.c_str(), &width, &height, &channels, 0);
+        GLuint texture;
 
         if (data) {
-            GLuint texture;
             glGenTextures(1, &texture);
             glBindTexture(GL_TEXTURE_2D, texture);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -33,7 +33,7 @@ namespace MyApp {
             }
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
             stbi_image_free(data);
-            return static_cast<ImTextureID>(texture);  // Cast to ImTextureID
+            return  static_cast<ImTextureID>(texture);  // Cast to ImTextureID
         }
 
         cerr << "nullptr" << endl;  // If loading failed
@@ -70,7 +70,8 @@ namespace MyApp {
             ImVec2 availableSpace = ImGui::GetContentRegionAvail();
             ImGui::PushID(accumulator);
             ImGui::BeginChild("objectFrame", childSize);
-            ImGui::Image(LoadImage(object.nameImage), ImVec2(childSize.x, childSize.x));
+            GLuint texture = LoadImage(object.nameImage);
+            ImGui::Image(texture, ImVec2(childSize.x, childSize.x));
             ImGui::Text("%s", object.nameFile.c_str());
             ImGui::Spacing();
             ImGui::EndChild();
@@ -80,11 +81,12 @@ namespace MyApp {
             else {
                 ImGui::SameLine();
             }
-            
+            textureDelete.push_back(texture);
             accumulator++;
             ImGui::PopID();
         }
         ImGui::EndChild();
+        
     }
 
     void menuBar()
@@ -103,6 +105,12 @@ namespace MyApp {
         io.FontGlobalScale = 1.25f;
     }
 
+    void freeTexture() {
+        for (const auto& textures : textureDelete) {
+            glDeleteTextures(1, &textures);
+        }
+    }
+
     void RenderUi()
     {
         adjustFont();
@@ -114,9 +122,7 @@ namespace MyApp {
         ImGui::DragFloat("Value", &value);
         float ado = 0;
         ImGui::InputFloat("coloque algum numero", &ado);
-       
         ImGui::End();
-
 
         //ImGui::ShowDemoWindow();
     }
