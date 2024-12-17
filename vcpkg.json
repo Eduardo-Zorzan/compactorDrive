@@ -1,6 +1,5 @@
 {
   "dependencies": [
-    "fmt",
-    "cpr"
+    "fmt"
   ]
 }

@@ -14,7 +14,6 @@
 #include <stdio.h>
 #define GL_SILENCE_DEPRECATION
 #if defined(IMGUI_IMPL_OPENGL_ES2)
-#include "cpr/cpr.h"
 #include <GLES2/gl2.h>
 #endif
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
@@ -190,7 +189,5 @@ int main(int, char**)
 
     glfwDestroyWindow(window);
     glfwTerminate();
-
-    Compactor::deleteFile("C:/Users/Duduz/Downloads/674e17fa7da51a0fbed710cd.mp3");
     return 0;
 }

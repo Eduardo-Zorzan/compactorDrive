@@ -106,16 +106,18 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\vcpkg_installed\vcpkg\pkgs\curl_x64-windows\include;..\example_glfw_opengl3;..\..;..\..\backends;..\libs\glfw\include;..\vcpkg_installed\vcpkg\pkgs\cpr_x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\example_glfw_opengl3;..\..;..\backends;..\libs\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\vcpkg_installed\vcpkg\pkgs\cpr_x64-windows\lib;..\libs\glfw\lib-vc2010-64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;cpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libs\glfw\lib-vc2010-64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
       <IgnoreSpecificDefaultLibraries>msvcrt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -166,42 +168,38 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\imgui.cpp" />
-    <ClCompile Include="..\..\imgui_demo.cpp" />
-    <ClCompile Include="..\..\imgui_draw.cpp" />
-    <ClCompile Include="..\..\imgui_tables.cpp" />
-    <ClCompile Include="..\..\imgui_widgets.cpp" />
-    <ClCompile Include="..\..\backends\imgui_impl_glfw.cpp" />
-    <ClCompile Include="..\..\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\backends\imgui.cpp" />
+    <ClCompile Include="..\backends\imgui_demo.cpp" />
+    <ClCompile Include="..\backends\imgui_draw.cpp" />
+    <ClCompile Include="..\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\backends\imgui_impl_opengl2.cpp" />
+    <ClCompile Include="..\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\backends\imgui_tables.cpp" />
+    <ClCompile Include="..\backends\imgui_widgets.cpp" />
     <ClCompile Include="compacter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="front.cpp" />
     <ClCompile Include="storage.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\imconfig.h" />
-    <ClInclude Include="..\..\imgui.h" />
-    <ClInclude Include="..\..\imgui_internal.h" />
-    <ClInclude Include="..\..\backends\imgui_impl_glfw.h" />
-    <ClInclude Include="..\..\backends\imgui_impl_opengl3.h" />
-    <ClInclude Include="..\..\backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="..\backends\imconfig.h" />
+    <ClInclude Include="..\backends\imgui.h" />
+    <ClInclude Include="..\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="..\backends\imgui_impl_opengl2.h" />
+    <ClInclude Include="..\backends\imgui_impl_opengl3.h" />
+    <ClInclude Include="..\backends\imgui_impl_win32.h" />
     <ClInclude Include="compacter.h" />
     <ClInclude Include="front.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="storage.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\misc\debuggers\imgui.natstepfilter" />
-    <None Include="..\..\misc\debuggers\imgui.natvis" />
     <None Include="..\README.txt" />
     <None Include="..\vcpkg-configuration.json" />
     <None Include="..\vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="..\..\..\..\Roboto-Regular.ttf" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

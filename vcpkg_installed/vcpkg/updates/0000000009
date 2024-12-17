@@ -1,0 +1,9 @@
+Package: curl
+Version: 8.11.1
+Depends: vcpkg-cmake, vcpkg-cmake-config, zlib
+Architecture: x64-windows
+Multi-Arch: same
+Abi: ac364ff0d129038fb418b093946f7554036b3eda9612ff908bf3f5fd85bde908
+Description: A library for transferring data with URLs
+Default-Features: non-http, ssl
+Status: purge ok not-installed
