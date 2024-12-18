@@ -179,6 +179,7 @@
     <ClCompile Include="compacter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="front.cpp" />
+    <ClCompile Include="mainFrame.cpp" />
     <ClCompile Include="storage.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +191,7 @@
     <ClInclude Include="..\backends\imgui_impl_win32.h" />
     <ClInclude Include="compacter.h" />
     <ClInclude Include="front.h" />
+    <ClInclude Include="mainFrame.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="storage.h" />
   </ItemGroup>

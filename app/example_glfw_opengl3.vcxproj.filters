@@ -8,14 +8,17 @@
     <Filter Include="sources\front">
       <UniqueIdentifier>{6dca62db-6f5c-4166-afba-18d2b7bfe783}</UniqueIdentifier>
     </Filter>
-    <Filter Include="sources\storage">
-      <UniqueIdentifier>{7c7f355b-29ec-4090-bfa6-1c3b4bcaf3c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="sources\compacter">
-      <UniqueIdentifier>{14745870-2378-4c2c-98df-fb1f8fd99592}</UniqueIdentifier>
-    </Filter>
     <Filter Include="imgui">
       <UniqueIdentifier>{56ca3e38-519c-498f-85c1-0ee2c1620d7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\server">
+      <UniqueIdentifier>{1c164105-dbf3-4c05-b474-b5e83a7dfa05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\server\compacter">
+      <UniqueIdentifier>{14745870-2378-4c2c-98df-fb1f8fd99592}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\server\storage">
+      <UniqueIdentifier>{7c7f355b-29ec-4090-bfa6-1c3b4bcaf3c6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -26,10 +29,10 @@
       <Filter>sources\front</Filter>
     </ClCompile>
     <ClCompile Include="storage.cpp">
-      <Filter>sources\storage</Filter>
+      <Filter>sources\server\storage</Filter>
     </ClCompile>
     <ClCompile Include="compacter.cpp">
-      <Filter>sources\compacter</Filter>
+      <Filter>sources\server\compacter</Filter>
     </ClCompile>
     <ClCompile Include="..\backends\imgui.cpp">
       <Filter>imgui</Filter>
@@ -55,19 +58,22 @@
     <ClCompile Include="..\backends\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
+    <ClCompile Include="mainFrame.cpp">
+      <Filter>sources\server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="front.h">
       <Filter>sources\front</Filter>
     </ClInclude>
     <ClInclude Include="storage.h">
-      <Filter>sources\storage</Filter>
+      <Filter>sources\server\storage</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h">
       <Filter>sources\front</Filter>
     </ClInclude>
     <ClInclude Include="compacter.h">
-      <Filter>sources\compacter</Filter>
+      <Filter>sources\server\compacter</Filter>
     </ClInclude>
     <ClInclude Include="..\backends\imconfig.h">
       <Filter>imgui</Filter>
@@ -86,6 +92,9 @@
     </ClInclude>
     <ClInclude Include="..\backends\imgui_impl_win32.h">
       <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="mainFrame.h">
+      <Filter>sources\server</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -23,5 +23,6 @@ namespace MyApp {
     void adjustFont();
     void freeTexture();
     void RenderUi();
+    void makeWindowInput();
 }
 

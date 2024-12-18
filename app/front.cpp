@@ -6,8 +6,12 @@
 
 using namespace std;
 using namespace storage;
+bool stateUpload = true;
+
 
 namespace MyApp {
+    char input[100] = "";
+    string inputResult;
     vector<GLuint> textureDelete;
     ImTextureID LoadImage(const string fileName) {
         const string& filePath = "../images/" + fileName;
@@ -89,15 +93,47 @@ namespace MyApp {
         
     }
 
+    void makeWindowInput() {
+        if (!stateUpload) {
+            bool* p_open = NULL;
+            ImGuiWindowFlags window_flags = 0;
+            ImGuiIO& io = ImGui::GetIO();
+            ImVec2 displaySize = io.DisplaySize;
+            float windowWidth = 400.0f;
+            float windowHeight = 300.0f;
+            float windowX = (displaySize.x - windowWidth) / 2.0f;
+            float windowY = (displaySize.y - windowHeight) / 2.0f;
+            ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight));
+            window_flags |= ImGuiWindowFlags_NoTitleBar;
+            window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
+            window_flags |= ImGuiWindowFlags_NoMove;
+            ImGui::Begin("uploadBlock", p_open, window_flags);
+            if (ImGui::Button("X")) stateUpload = true;
+            ImGui::Text("%s", "SELECT THE FILE PATH TO COMPACT:");
+            ImGui::Spacing();
+            ImGui::InputText(" ", input, sizeof(input));
+            ImGui::SameLine();
+            if (ImGui::Button("OPEN")) {
+                inputResult = string(input);
+                stateUpload = true;
+            }
+            ImGui::End();
+        }
+    }
+
     void menuBar()
     {
        if (ImGui::BeginMainMenuBar())
        {
            ImGui::Button("Settings");
            ImGui::Button("Filter");
-           ImGui::Button("Upload");
+           if (stateUpload) {
+               if (ImGui::Button("Upload")) stateUpload = false;
+           }
            ImGui::EndMainMenuBar();
        }
+       makeWindowInput();
     }
 
     void adjustFont() {
@@ -117,13 +153,7 @@ namespace MyApp {
         makepWindow();
         menuBar();
         makeFiles();
-        ImGui::Button("PRESS MEEEEE");
-        static float value = 0.5f;
-        ImGui::DragFloat("Value", &value);
-        float ado = 0;
-        ImGui::InputFloat("coloque algum numero", &ado);
         ImGui::End();
-
-        //ImGui::ShowDemoWindow();
+       //ImGui::ShowDemoWindow();
     }
 }
