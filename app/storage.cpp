@@ -13,8 +13,9 @@ namespace storage
         returnObject object;
         vector<string> splitedData = split(rawData, " ");
         object.nameFile = splitedData[0];
-        object.nameImage = splitedData[1];
-        object.compressFile = splitedData[2];
+        object.pathFile = splitedData[1];
+        object.nameImage = splitedData[2];
+        object.compressFile = splitedData[3];
         return object;
     }
 

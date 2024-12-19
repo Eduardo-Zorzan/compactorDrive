@@ -1,8 +1,8 @@
 #include "front.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-#include "storage.h";
-
+#include "storage.h"
+#include "mainFrame.h"
 
 using namespace std;
 using namespace storage;
@@ -116,6 +116,7 @@ namespace MyApp {
             ImGui::SameLine();
             if (ImGui::Button("OPEN")) {
                 inputResult = string(input);
+                MainFrame::compactRegister(inputResult);
                 stateUpload = true;
             }
             ImGui::End();

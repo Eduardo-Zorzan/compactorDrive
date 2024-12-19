@@ -12,6 +12,7 @@ namespace storage
 {
     struct returnObject {
         string nameFile;
+        string pathFile;
         string nameImage;
         string compressFile;
     };

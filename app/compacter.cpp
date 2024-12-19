@@ -4,14 +4,35 @@
 using namespace std;
 
 namespace Compactor {
+    string fileNameGlobal;
     static vector<string> split(const string& str, const string& delimiter) {
         regex regex(delimiter);
         sregex_token_iterator it(str.begin(), str.end(), regex, -1);
         return { it, {} };
     }
 
-    string compactFile(string compactedName, string filePath) {
-        const string fileCommand = "rar a -m5 -s -ep ../temporary/" + compactedName + " " + filePath;
+    string returnFileNameGlobal() {
+        return fileNameGlobal;
+    }
+
+    string compactFile(string filePath) {
+        vector<string> splitedFileName = split(filePath, "/");
+        string fileCommand;
+        string folderPath;
+        int acumulator = 0;
+        for (const auto& folder : splitedFileName) {
+            if (acumulator != splitedFileName.size() - 1) {
+                folderPath += folder + "/";
+            }
+            else {
+                vector<string> splitedTypeFile = split(folder, ".");
+                fileNameGlobal = folder;
+                cout << splitedTypeFile[0] << endl;
+                fileCommand = "rar a -m5 -s -ep ../temporary/" + splitedTypeFile[0] + " " + filePath;
+            }
+            acumulator++;
+        }
+        
         FILE* pipe = _popen(fileCommand.c_str(), "r");
         if (!pipe) {
             return "Failed to run command\n";        }

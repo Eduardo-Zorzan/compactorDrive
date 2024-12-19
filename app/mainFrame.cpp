@@ -2,8 +2,13 @@
 #include "storage.h"
 #include "compacter.h"
 
-namespace MainFrame {
-	void compactRegister(std::string filePath) {
+using namespace std;
 
+namespace MainFrame {
+	void compactRegister(string filePath) {
+		Compactor::compactFile(filePath);
+		string fileName = Compactor::returnFileNameGlobal();
+		string nameImage = "asdf.png";
+		storage::putFiles(fileName + " " + filePath + " " + nameImage + " " + fileName + ".rar");
 	}
 }
