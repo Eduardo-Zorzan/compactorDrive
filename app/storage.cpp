@@ -82,7 +82,7 @@ namespace storage
     {
         vector<string> testName = split(data, " ");
         if (getFiles(testName[0]) != "Error: file don't exist") {  
-            return "File name already storaged";
+            return string("File name already storaged");
         }
 
         string allFiles = getRawData();
@@ -92,14 +92,14 @@ namespace storage
 
         if (!fout)
         {
-            return "Error, file don't open";
+            return string("Error, file don't open");
         }
 
         allFiles = allFiles + data;
         fout << allFiles << endl;
         fout.close();
 
-        return "file writed with success";
+        return string("file writed with success");
     }
 
     string deleteFiles(string nameFile)

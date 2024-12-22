@@ -7,10 +7,10 @@
 using namespace std;
 using namespace storage;
 bool stateUpload = true;
-
+bool deleteOriginFiles = false;
 
 namespace MyApp {
-    char input[100] = "";
+    char input[400] = "";
     string inputResult;
     vector<GLuint> textureDelete;
     ImTextureID LoadImage(const string fileName) {
@@ -60,15 +60,11 @@ namespace MyApp {
     }
 
     static void makeFiles() {
-        static bool initialized = false;
         ImVec2 childSize = ImVec2(150.0f, 200.0f);
 
         ImGui::BeginChild("mainFrame", ImVec2(0, 0), true);
         static vector<returnObject> files;
-        if (!initialized) {
-            files = getAllFiles();
-            initialized = true;
-        }
+        files = getAllFiles();
         int accumulator = 0;
         for (const auto& object : files) {
             ImVec2 availableSpace = ImGui::GetContentRegionAvail();
@@ -99,8 +95,8 @@ namespace MyApp {
             ImGuiWindowFlags window_flags = 0;
             ImGuiIO& io = ImGui::GetIO();
             ImVec2 displaySize = io.DisplaySize;
-            float windowWidth = 400.0f;
-            float windowHeight = 300.0f;
+            float windowWidth = 700.0f;
+            float windowHeight = 200.0f;
             float windowX = (displaySize.x - windowWidth) / 2.0f;
             float windowY = (displaySize.y - windowHeight) / 2.0f;
             ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always);
@@ -109,16 +105,22 @@ namespace MyApp {
             window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
             window_flags |= ImGuiWindowFlags_NoMove;
             ImGui::Begin("uploadBlock", p_open, window_flags);
+            ImGui::SameLine(ImGui::GetWindowWidth() - ImGui::CalcTextSize("X").x - 15.00f);
             if (ImGui::Button("X")) stateUpload = true;
             ImGui::Text("%s", "SELECT THE FILE PATH TO COMPACT:");
             ImGui::Spacing();
+            ImGui::PushItemWidth(600);
             ImGui::InputText(" ", input, sizeof(input));
+            ImGui::PopItemWidth;
             ImGui::SameLine();
             if (ImGui::Button("OPEN")) {
                 inputResult = string(input);
-                MainFrame::compactRegister(inputResult);
+                MainFrame::compactRegister(inputResult, deleteOriginFiles); // review this shit, return isn't working
                 stateUpload = true;
             }
+            ImGui::NewLine;
+            ImGui::Spacing();
+            ImGui::Checkbox("Delete Origin Files?", &deleteOriginFiles);
             ImGui::End();
         }
     }
@@ -149,7 +151,7 @@ namespace MyApp {
     }
 
     void RenderUi()
-    {
+    {   
         adjustFont();
         makepWindow();
         menuBar();

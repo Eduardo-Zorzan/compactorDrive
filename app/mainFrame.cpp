@@ -2,13 +2,57 @@
 #include "storage.h"
 #include "compacter.h"
 
-using namespace std;
-
 namespace MainFrame {
-	void compactRegister(string filePath) {
-		Compactor::compactFile(filePath);
-		string fileName = Compactor::returnFileNameGlobal();
+	static vector<string> split(const string& str, const string& delimiter) {
+		regex regex(delimiter);
+		sregex_token_iterator it(str.begin(), str.end(), regex, -1);
+		return { it, {} };
+	}
+
+	static string fixFilePath(string filePath) {
+		string fixedFilePath = "";
+		for (const auto& character : filePath) {
+			if (character == '\\') fixedFilePath += "/";
+			else if (character == '\"') continue;
+			else fixedFilePath += character;
+		}
+		return fixedFilePath;
+	}
+
+	static string getFileName(string fixedPath) {
+		string fileNameGlobal = "";
+		string folderPath;
+		int acumulator = 0;
+		vector<string> splitedFileName = split(fixedPath, "/");
+		for (const auto& folder : splitedFileName) {
+			if (acumulator != splitedFileName.size() - 1) {
+				folderPath += folder + "/";
+			}
+			else {
+				vector<string> splitedTypeFile = split(folder, "");
+				for (const auto& test : splitedTypeFile) {
+					if (test != ".") {
+						fileNameGlobal = fileNameGlobal + test;
+					}
+					else break;
+				}
+			}
+			acumulator++;
+		}
+		return fileNameGlobal;
+	}
+
+	const char* compactRegister (string filePath, bool deleteOrigin) {
 		string nameImage = "asdf.png";
-		storage::putFiles(fileName + " " + filePath + " " + nameImage + " " + fileName + ".rar");
+		string fixedFilePath = fixFilePath(filePath);
+		string fileNameGlobal = getFileName(fixedFilePath);
+		string data = fileNameGlobal + " " + fixedFilePath + " " + nameImage + " " + fileNameGlobal + ".rar";
+		string resultStorage = storage::putFiles(data);
+		if (resultStorage != "File name already storaged") {
+			string fileName = Compactor::compactFile(fixedFilePath, fileNameGlobal);
+		}
+		if (deleteOrigin) Compactor::deleteFile(fixedFilePath);
+		else return "r"; //review this shit, return isn't working
+		
 	}
 }
