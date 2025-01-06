@@ -7,12 +7,14 @@
 using namespace std;
 using namespace storage;
 bool stateUpload = true;
+bool stateDescompact = true;
 bool deleteOriginFiles = false;
 
 namespace MyApp {
     char input[400] = "";
     string inputResult;
     vector<GLuint> textureDelete;
+    vector<string> checkedFiles;
     ImTextureID LoadImage(const string fileName) {
         const string& filePath = "../images/" + fileName;
         int width, height, channels;
@@ -48,28 +50,44 @@ namespace MyApp {
         bool* p_open = NULL;
         ImGuiWindowFlags window_flags = 0;
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
-
         ImGui::SetNextWindowPos(viewport->WorkPos);
         ImGui::SetNextWindowSize(viewport->WorkSize);
         window_flags |= ImGuiWindowFlags_NoTitleBar;
         window_flags |= ImGuiWindowFlags_NoMove;
         window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
-        window_flags |= ImGuiWindowFlags_NoMove;
-        ImGui::Begin("Settings", p_open, window_flags);
+        ImGui::Begin("Settings", p_open, window_flags);                                  
         return window_flags;
+    }
+
+    static void checkboxFiles(string fileName) {
+        bool checkedFile = false;
+        bool checkFileAlreadyInVector = false;
+        for (const auto& fileSelected : checkedFiles) {
+            if (fileName == fileSelected) {
+                checkedFile = true;
+                checkFileAlreadyInVector = true;
+            }
+        }
+        ImGui::Checkbox(fileName.c_str(), &checkedFile);
+        if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+        if (checkedFile && !checkFileAlreadyInVector) checkedFiles.push_back(fileName);
+        else if (!checkedFile) {
+            auto fileToRemove = find(checkedFiles.begin(), checkedFiles.end(), fileName);
+            if (fileToRemove != checkedFiles.end()) checkedFiles.erase(fileToRemove);
+        };
     }
 
     static void makeFiles() {
         ImVec2 childSize = ImVec2(150.0f, 200.0f);
-
-        ImGui::BeginChild("mainFrame", ImVec2(0, 0), true);
         static vector<returnObject> files;
+        ImGui::BeginChild("mainFrame", ImVec2(0, 0), true);
         files = getAllFiles();
         int accumulator = 0;
         for (const auto& object : files) {
             ImVec2 availableSpace = ImGui::GetContentRegionAvail();
             ImGui::PushID(accumulator);
             ImGui::BeginChild("objectFrame", childSize);
+            checkboxFiles(object.nameFile);
             GLuint texture = LoadImage(object.nameImage);
             ImGui::Image(texture, ImVec2(childSize.x, childSize.x));
             ImGui::Text("%s", object.nameFile.c_str());
@@ -103,10 +121,10 @@ namespace MyApp {
             ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight));
             window_flags |= ImGuiWindowFlags_NoTitleBar;
             window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
-            window_flags |= ImGuiWindowFlags_NoMove;
             ImGui::Begin("uploadBlock", p_open, window_flags);
             ImGui::SameLine(ImGui::GetWindowWidth() - ImGui::CalcTextSize("X").x - 15.00f);
             if (ImGui::Button("X")) stateUpload = true;
+            if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
             ImGui::Text("%s", "SELECT THE FILE PATH TO COMPACT:");
             ImGui::Spacing();
             ImGui::PushItemWidth(600);
@@ -118,9 +136,45 @@ namespace MyApp {
                 MainFrame::compactRegister(inputResult, deleteOriginFiles); // review this shit, return isn't working
                 stateUpload = true;
             }
+            if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
             ImGui::NewLine;
             ImGui::Spacing();
             ImGui::Checkbox("Delete Origin Files?", &deleteOriginFiles);
+            ImGui::End();
+        }
+    }
+
+    void makeWindowDescompat() {
+        if (!stateDescompact) {
+            bool* p_open = NULL;
+            ImGuiWindowFlags window_flags = 0;
+            ImGuiIO& io = ImGui::GetIO();
+            ImVec2 displaySize = io.DisplaySize;
+            float windowWidth = 750.0f;
+            float windowHeight = 200.0f;
+            float windowX = (displaySize.x - windowWidth) / 2.0f;
+            float windowY = (displaySize.y - windowHeight) / 2.0f;
+            ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight));
+            window_flags |= ImGuiWindowFlags_NoTitleBar;
+            window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
+            window_flags |= ImGuiWindowFlags_NoMove;
+            ImGui::Begin("descompactBlock", p_open, window_flags);
+            ImGui::SameLine(ImGui::GetWindowWidth() - ImGui::CalcTextSize("X").x - 15.00f);
+            if (ImGui::Button("X")) stateDescompact = true;
+            if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+            ImGui::Text("%s", "SELECT THE OUTPUT PATH:");
+            ImGui::Spacing();
+            ImGui::PushItemWidth(600);
+            ImGui::InputText(" ", input, sizeof(input));
+            ImGui::PopItemWidth;
+            ImGui::SameLine();
+            if (ImGui::Button("Descompact")) {
+                stateDescompact = true;
+            }
+            if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+            ImGui::NewLine;
+            ImGui::Spacing();
             ImGui::End();
         }
     }
@@ -130,13 +184,18 @@ namespace MyApp {
        if (ImGui::BeginMainMenuBar())
        {
            ImGui::Button("Settings");
-           ImGui::Button("Filter");
+           if (stateDescompact) {
+               if (ImGui::Button("Descompact")) stateDescompact = false;
+           }
+           if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
            if (stateUpload) {
                if (ImGui::Button("Upload")) stateUpload = false;
            }
+           if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
            ImGui::EndMainMenuBar();
        }
        makeWindowInput();
+       makeWindowDescompat();
     }
 
     void adjustFont() {
