@@ -13,4 +13,6 @@ namespace MainFrame {
 	static vector<string> split(const string& str, const string& delimiter);
 	static string fixFilePath(string filePath);
 	static string getFileName(string fixedPath);
+	string descompressDeleteRegister(string filePath, vector<string> listToDescompress);
+	string delteFileAndRegister(vector<string> filesToDelete);
 }

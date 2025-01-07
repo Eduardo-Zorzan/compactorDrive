@@ -53,6 +53,27 @@ namespace MainFrame {
 		}
 		if (deleteOrigin) Compactor::deleteFile(fixedFilePath);
 		else return "r"; //review this shit, return isn't working
-		
 	}
+
+	string descompressDeleteRegister(string filePath, vector<string> listToDescompress) {
+		string fixedPath = fixFilePath(filePath);
+		for (const auto& fileName : listToDescompress) {
+			if (Compactor::descompactFile(fileName, fixedPath) == "Failed to run command\n") {
+				return "something isn't right";
+			}
+			storage::deleteFiles(fileName);
+		}
+		return " ";
+	}
+
+	string delteFileAndRegister(vector<string> filesToDelete) {
+		for (const auto& fileName : filesToDelete) {
+			if (Compactor::deleteFile("../temporary/" + fileName + ".rar") == "Failed to run command\n") {
+				return "something isn't right";
+			}
+			storage::deleteFiles(fileName);
+		}
+		return " ";
+	}
+
 }

@@ -25,7 +25,8 @@ namespace Compactor {
         return buffer;
     }
     string descompactFile(string fileName, string folderName) {
-        const string fileCommand = "rar x ../temporary/" + fileName + " " + folderName;
+        const string deleteCommand = " & cd ../temporary/ & del " + fileName + ".rar";
+        const string fileCommand = "rar x ../temporary/" + fileName + " " + folderName + deleteCommand;
         FILE* pipe = _popen(fileCommand.c_str(), "r");
         if (!pipe) {
             return "Failed to run command\n";
@@ -48,7 +49,7 @@ namespace Compactor {
                 folderPath += folder + "/";
             }
             else {
-                fileCommand = "cd " + folderPath + " & " + "del " + folder;
+                fileCommand = "cd " + folderPath + " & del " + folder;
             }
             acumulator++;
         }

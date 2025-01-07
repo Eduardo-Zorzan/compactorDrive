@@ -24,7 +24,7 @@ namespace MyApp {
     void freeTexture();
     void RenderUi();
     void makeWindowInput();
-    void makeWindowDescompat();
+    void makeWindowDescompress();
     static void checkboxFiles(string fileName);
 }
 

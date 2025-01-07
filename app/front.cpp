@@ -12,7 +12,9 @@ bool deleteOriginFiles = false;
 
 namespace MyApp {
     char input[400] = "";
+    char outputPath[400] = "";
     string inputResult;
+    string outputPathResult;
     vector<GLuint> textureDelete;
     vector<string> checkedFiles;
     ImTextureID LoadImage(const string fileName) {
@@ -55,7 +57,11 @@ namespace MyApp {
         window_flags |= ImGuiWindowFlags_NoTitleBar;
         window_flags |= ImGuiWindowFlags_NoMove;
         window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
-        ImGui::Begin("Settings", p_open, window_flags);                                  
+        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
+        if (!stateUpload || !stateDescompact) {
+            window_flags |= ImGuiWindowFlags_NoInputs;
+        }
+        ImGui::Begin("Main", p_open, window_flags);
         return window_flags;
     }
 
@@ -117,10 +123,11 @@ namespace MyApp {
             float windowHeight = 200.0f;
             float windowX = (displaySize.x - windowWidth) / 2.0f;
             float windowY = (displaySize.y - windowHeight) / 2.0f;
-            ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always);
-            ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight));
             window_flags |= ImGuiWindowFlags_NoTitleBar;
             window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
+            ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight));
+            ImGui::SetNextWindowFocus();
             ImGui::Begin("uploadBlock", p_open, window_flags);
             ImGui::SameLine(ImGui::GetWindowWidth() - ImGui::CalcTextSize("X").x - 15.00f);
             if (ImGui::Button("X")) stateUpload = true;
@@ -144,7 +151,7 @@ namespace MyApp {
         }
     }
 
-    void makeWindowDescompat() {
+    void makeWindowDescompress() {
         if (!stateDescompact) {
             bool* p_open = NULL;
             ImGuiWindowFlags window_flags = 0;
@@ -154,11 +161,12 @@ namespace MyApp {
             float windowHeight = 200.0f;
             float windowX = (displaySize.x - windowWidth) / 2.0f;
             float windowY = (displaySize.y - windowHeight) / 2.0f;
-            ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always);
-            ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight));
             window_flags |= ImGuiWindowFlags_NoTitleBar;
             window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
             window_flags |= ImGuiWindowFlags_NoMove;
+            ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight));
+            ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always);
+            ImGui::SetNextWindowFocus();
             ImGui::Begin("descompactBlock", p_open, window_flags);
             ImGui::SameLine(ImGui::GetWindowWidth() - ImGui::CalcTextSize("X").x - 15.00f);
             if (ImGui::Button("X")) stateDescompact = true;
@@ -166,10 +174,12 @@ namespace MyApp {
             ImGui::Text("%s", "SELECT THE OUTPUT PATH:");
             ImGui::Spacing();
             ImGui::PushItemWidth(600);
-            ImGui::InputText(" ", input, sizeof(input));
+            ImGui::InputText(" ", outputPath, sizeof(input));
             ImGui::PopItemWidth;
             ImGui::SameLine();
             if (ImGui::Button("Descompact")) {
+                outputPathResult = string(outputPath);
+                MainFrame::descompressDeleteRegister(outputPathResult, checkedFiles);
                 stateDescompact = true;
             }
             if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
@@ -183,19 +193,16 @@ namespace MyApp {
     {
        if (ImGui::BeginMainMenuBar())
        {
-           ImGui::Button("Settings");
-           if (stateDescompact) {
-               if (ImGui::Button("Descompact")) stateDescompact = false;
-           }
+           if (ImGui::Button("Descompact")) stateDescompact = false;
            if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-           if (stateUpload) {
-               if (ImGui::Button("Upload")) stateUpload = false;
-           }
+           if (ImGui::Button("Upload")) stateUpload = false;
+           if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+           if (ImGui::Button("Delete") && checkedFiles.size() != 0) MainFrame::delteFileAndRegister(checkedFiles);
            if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
            ImGui::EndMainMenuBar();
        }
        makeWindowInput();
-       makeWindowDescompat();
+       makeWindowDescompress();
     }
 
     void adjustFont() {
@@ -216,6 +223,5 @@ namespace MyApp {
         menuBar();
         makeFiles();
         ImGui::End();
-       //ImGui::ShowDemoWindow();
     }
 }
