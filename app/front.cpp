@@ -74,7 +74,7 @@ namespace MyApp {
                 checkFileAlreadyInVector = true;
             }
         }
-        ImGui::Checkbox(fileName.c_str(), &checkedFile);
+        ImGui::Checkbox(("##" + fileName).c_str(), &checkedFile); //the ## it's for not show any text after the checkbox
         if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
         if (checkedFile && !checkFileAlreadyInVector) checkedFiles.push_back(fileName);
         else if (!checkedFile) {
@@ -84,7 +84,8 @@ namespace MyApp {
     }
 
     static void makeFiles() {
-        ImVec2 childSize = ImVec2(150.0f, 200.0f);
+        ImGuiIO& io = ImGui::GetIO();
+        ImVec2 childSize = ImVec2(100.0f, 200.0f);
         static vector<returnObject> files;
         ImGui::BeginChild("mainFrame", ImVec2(0, 0), true);
         files = getAllFiles();
@@ -96,7 +97,7 @@ namespace MyApp {
             checkboxFiles(object.nameFile);
             GLuint texture = LoadImage(object.nameImage);
             ImGui::Image(texture, ImVec2(childSize.x, childSize.x));
-            ImGui::Text("%s", object.nameFile.c_str());
+            ImGui::Text("%s", object.nameFile.c_str());            
             ImGui::Spacing();
             ImGui::EndChild();
             if (ImGui::GetCursorPosX() + childSize.x > availableSpace.x) {
@@ -110,7 +111,6 @@ namespace MyApp {
             ImGui::PopID();
         }
         ImGui::EndChild();
-        
     }
 
     void makeWindowInput() {
@@ -121,8 +121,10 @@ namespace MyApp {
             ImVec2 displaySize = io.DisplaySize;
             float windowWidth = 700.0f;
             float windowHeight = 200.0f;
-            float windowX = (displaySize.x - windowWidth) / 2.0f;
-            float windowY = (displaySize.y - windowHeight) / 2.0f;
+            float windowPositionX = ImGui::GetWindowPos().x;
+            float windowPositionY = ImGui::GetWindowPos().y;
+            float windowX = ((displaySize.x - windowWidth) / 2.0f) + windowPositionX;
+            float windowY = (((displaySize.y - windowHeight) / 2.0f) + windowPositionY) * 0.90f;
             window_flags |= ImGuiWindowFlags_NoTitleBar;
             window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
             ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always);
@@ -159,8 +161,10 @@ namespace MyApp {
             ImVec2 displaySize = io.DisplaySize;
             float windowWidth = 750.0f;
             float windowHeight = 200.0f;
-            float windowX = (displaySize.x - windowWidth) / 2.0f;
-            float windowY = (displaySize.y - windowHeight) / 2.0f;
+            float windowPositionX = ImGui::GetWindowPos().x;
+            float windowPositionY = ImGui::GetWindowPos().y;
+            float windowX = ((displaySize.x - windowWidth) / 2.0f) + windowPositionX;
+            float windowY = (((displaySize.y - windowHeight) / 2.0f) + windowPositionY) * 0.90f;
             window_flags |= ImGuiWindowFlags_NoTitleBar;
             window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
             window_flags |= ImGuiWindowFlags_NoMove;

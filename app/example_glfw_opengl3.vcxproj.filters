@@ -103,7 +103,7 @@
     <None Include="..\vcpkg-configuration.json" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="..\..\..\..\Roboto-Regular.ttf">
+    <Font Include="Roboto-Regular.ttf">
       <Filter>sources</Filter>
     </Font>
   </ItemGroup>
