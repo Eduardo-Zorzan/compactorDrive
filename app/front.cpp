@@ -114,6 +114,8 @@ namespace MyApp {
     }
 
     void makeWindowInput() {
+        int checkedProcess = MainFrame::checkProcessing();
+        if (checkedProcess > 0) loadingBar(checkedProcess);
         if (!stateUpload) {
             bool* p_open = NULL;
             ImGuiWindowFlags window_flags = 0;
@@ -218,6 +220,13 @@ namespace MyApp {
         for (const auto& textures : textureDelete) {
             glDeleteTextures(1, &textures);
         }
+    }
+
+    static void loadingBar(int progress) {
+        float floatProgress = static_cast<float>(progress);
+        floatProgress = floatProgress / 100;
+        if (floatProgress > 100) floatProgress = 1.0f;
+        ImGui::ProgressBar(floatProgress, ImVec2(0.0f, 0.0f), "Loading...");
     }
 
     void RenderUi()

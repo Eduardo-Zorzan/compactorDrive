@@ -100,10 +100,16 @@ namespace MainFrame {
 		string data = fileNameGlobal + " " + fixedFilePath + " " + nameImage + " " + fileNameGlobal + ".rar";
 		string resultStorage = storage::putFiles(data);
 		if (resultStorage != "File name already storaged") {
-			string fileName = Compactor::compactFile(fixedFilePath, fileNameGlobal);
+			 Compactor::StartCompression(fixedFilePath, fileNameGlobal);
 		}
 		if (deleteOrigin) Compactor::deleteFile(fixedFilePath);
 		else return "r"; //review this shit, return isn't working
+	}
+
+	int checkProcessing() {
+		string checked = Compactor::checkProcess();
+		if (checked != "") return stoi(checked);
+		return 0;
 	}
 
 	string descompressDeleteRegister(string filePath, vector<string> listToDescompress) {
