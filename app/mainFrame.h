@@ -15,7 +15,7 @@ namespace MainFrame {
 	static vector<string> split(const string& str, const string& delimiter);
 	static string fixFilePath(string filePath);
 	static vector<string> getFileName(string fixedPath);
-	int checkProcessing();
+	vector<int> checkProcessing();
 	string descompressDeleteRegister(string filePath, vector<string> listToDescompress);
 	string delteFileAndRegister(vector<string> filesToDelete);
 	static string defineImage(string typeFile);

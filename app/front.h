@@ -16,7 +16,7 @@ namespace MyApp {
         string fileName;
         ImTextureID imageTexture;
     };
-    static void loadingBar(int progress);
+    static void loadingBar();
     ImTextureID LoadImage(const string filePath);
     ImGuiWindowFlags makepWindow();
     static void makeFiles();

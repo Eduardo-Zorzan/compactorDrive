@@ -106,10 +106,14 @@ namespace MainFrame {
 		else return "r"; //review this shit, return isn't working
 	}
 
-	int checkProcessing() {
+	vector<int> checkProcessing() {
 		string checked = Compactor::checkProcess();
-		if (checked != "") return stoi(checked);
-		return 0;
+		if (checked != "") {
+			vector<string> treatedCheckedString = split(checked, " ");
+			vector<int> treatedCheckedInt = { stoi(treatedCheckedString[0]), stoi(treatedCheckedString[1]) };
+			return treatedCheckedInt;
+		}
+		return { -1 };
 	}
 
 	string descompressDeleteRegister(string filePath, vector<string> listToDescompress) {

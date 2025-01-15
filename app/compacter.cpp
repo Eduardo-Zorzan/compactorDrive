@@ -15,7 +15,6 @@ std::mutex outputMutex;                  // Mutex to protect shared output
 std::string threadOutput;                // Shared output from the thread
 
 namespace Compactor { 
-
     static vector<string> split(const string& str, const string& delimiter) {
         regex regex(delimiter);
         sregex_token_iterator it(str.begin(), str.end(), regex, -1);
@@ -33,18 +32,17 @@ namespace Compactor {
             isRunning = false;
             return;
         }
-
+        int accumulator = 0;
         char buffer[128];
         std::ostringstream output;
         std::string progress = " ";
         while (fgets(buffer, sizeof(buffer), pipe) != nullptr)
         {
-
             {
                 output << buffer;
                 // Example: Display progress
                 std::string line(buffer);
-                cout << line;
+                if (line.find("OK") != string::npos) accumulator++;
                 if (line.find("%") != std::string::npos)
                 {
                     size_t percentPos = line.find('%');
@@ -54,14 +52,12 @@ namespace Compactor {
                         progress = line.substr(startPos, percentPos - startPos);
                         try
                         {
-                            threadOutput = progress;
+                            threadOutput = progress + " " + to_string(accumulator);
                             std::lock_guard<std::mutex> lock(outputMutex);
-
-                            // Update a progress bar, e.g., pass progressValue to an ImGui widget
                         }
-                        catch (...)
+                        catch (string e)
                         {
-                            // Handle parsing error
+                            cout << e << endl;
                         }
                     }
                 }
