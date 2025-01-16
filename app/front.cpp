@@ -4,6 +4,8 @@
 #include "storage.h"
 #include "mainFrame.h"
 
+
+
 using namespace std;
 using namespace storage;
 bool stateUpload = true;
@@ -45,6 +47,10 @@ namespace MyApp {
         }
 
         cerr << "nullptr" << endl;  // If loading failed
+    }
+
+    void cleanChecked() {
+        checkedFiles = {};
     }
 
     ImGuiWindowFlags makepWindow()
@@ -141,8 +147,14 @@ namespace MyApp {
             ImGui::PopItemWidth;
             ImGui::SameLine();
             if (ImGui::Button("OPEN")) {
-                inputResult = string(input);
-                MainFrame::compactRegister(inputResult, deleteOriginFiles); // review this shit, return isn't working
+                inputResult = OpenFileOrFolderDialog(false);
+                strncpy(input, inputResult.c_str(), sizeof(input) - 1);
+            }
+            if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+            ImGui::NewLine;
+            if (ImGui::Button("Compress")) {
+                string inputString = input;
+                MainFrame::compactRegister(inputString, deleteOriginFiles); // review this shit, return isn't working
                 stateUpload = true;
             }
             if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
@@ -178,13 +190,18 @@ namespace MyApp {
             ImGui::Text("%s", "SELECT THE OUTPUT PATH:");
             ImGui::Spacing();
             ImGui::PushItemWidth(600);
-            ImGui::InputText(" ", outputPath, sizeof(input));
+            ImGui::InputText(" ", outputPath, sizeof(outputPath));
             ImGui::PopItemWidth;
             ImGui::SameLine();
-            if (ImGui::Button("Descompact")) {
-                outputPathResult = string(outputPath);
-                MainFrame::descompressDeleteRegister(outputPathResult, checkedFiles);
+            if (ImGui::Button("OPEN")) {
+                outputPathResult = OpenFileOrFolderDialog(true);
+                strncpy(outputPath, outputPathResult.c_str(), sizeof(outputPath) - 1);
+            }
+            if (ImGui::Button("Descompress")) {
+                string outputPathString = outputPath;
+                MainFrame::descompressDeleteRegister(outputPathString, checkedFiles);
                 stateDescompact = true;
+                cleanChecked();
             }
             if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
             ImGui::NewLine;
@@ -201,7 +218,10 @@ namespace MyApp {
            if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
            if (ImGui::Button("Upload")) stateUpload = false;
            if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-           if (ImGui::Button("Delete") && checkedFiles.size() != 0) MainFrame::delteFileAndRegister(checkedFiles);
+           if (ImGui::Button("Delete") && checkedFiles.size() != 0) {
+               MainFrame::delteFileAndRegister(checkedFiles);
+               cleanChecked();
+           }
            if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
            ImGui::EndMainMenuBar();
        }
@@ -222,15 +242,84 @@ namespace MyApp {
 
     static void loadingBar() {
         vector<int> checkedProcess = MainFrame::checkProcessing();
+
         if (checkedProcess[0] >= 0) {
+            bool* p_open = NULL;
+            ImGuiWindowFlags window_flags = 0;
+            ImGuiIO& io = ImGui::GetIO();
+            ImVec2 displaySize = io.DisplaySize;
+
+            float windowWidth = 750.0f;
+            float windowHeight = 200.0f;
+            float windowPositionX = ImGui::GetWindowPos().x;
+            float windowPositionY = ImGui::GetWindowPos().y;
+            float windowX = ((displaySize.x - windowWidth) / 2.0f) + windowPositionX;
+            float windowY = (((displaySize.y - windowHeight) / 2.0f) + windowPositionY) * 0.90f;
+
+            window_flags |= ImGuiWindowFlags_NoTitleBar;
+            window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
+            window_flags |= ImGuiWindowFlags_NoMove;
+
+            ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight));
+            ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always);
+            ImGui::SetNextWindowFocus();
+            ImGui::Begin("LoadingBlock", p_open, window_flags);
             float floatProgress = static_cast<float>(checkedProcess[0]);
             floatProgress = floatProgress / 100;
             if (floatProgress > 100) floatProgress = 1.0f;
             string textLoading = to_string(checkedProcess[1]) + " Files processed";
             if(checkedProcess[1] > 0) ImGui::Text("%s", textLoading.c_str());
-            ImGui::ProgressBar(floatProgress, ImVec2(0.0f, 0.0f), "Loading...");
+            const string progressString = to_string(floatProgress * 100) + "%";
+
+            ImGui::ProgressBar(floatProgress, ImVec2(600.0f, 0.0f), progressString.c_str());
+            ImGui::Spacing();
+            ImGui::End();
         }
-        
+  
+    }
+
+    string OpenFileOrFolderDialog(bool selectFolders) {
+        HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+        std::string result;
+        if (SUCCEEDED(hr)) {
+            IFileOpenDialog* pFileOpen = NULL;
+
+            // Create the FileOpenDialog object
+            hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+            if (SUCCEEDED(hr)) {
+                // Set options for the dialog
+                DWORD options = 0;
+                hr = pFileOpen->GetOptions(&options); // Get current options
+                if (SUCCEEDED(hr)) {
+                    if (selectFolders) {
+                        options |= FOS_PICKFOLDERS; // Enable folder selection
+                    }
+                    pFileOpen->SetOptions(options); // Apply the options
+                }
+
+                // Show the dialog box
+                hr = pFileOpen->Show(NULL);
+                if (SUCCEEDED(hr)) {
+                    // Get the selected item (file or folder)
+                    IShellItem* pItem;
+                    hr = pFileOpen->GetResult(&pItem);
+                    if (SUCCEEDED(hr)) {
+                        PWSTR pszFilePath;
+                        hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+                        if (SUCCEEDED(hr)) {
+                            // Convert wide string (PWSTR) to std::string (UTF-8)
+                            std::wstring filePathW(pszFilePath);
+                            result = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(filePathW);
+                            CoTaskMemFree(pszFilePath); // Free memory allocated for pszFilePath
+                        }
+                        pItem->Release();
+                    }
+                }
+                pFileOpen->Release();
+            }
+            CoUninitialize();
+        }
+        return result;
     }
 
     void RenderUi()

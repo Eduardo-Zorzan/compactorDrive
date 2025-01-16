@@ -7,7 +7,10 @@
 #include <filesystem>
 #include <iostream>
 #include <GLFW/glfw3.h>
-
+#include <windows.h>
+#include <shobjidl.h>
+#include <locale>
+#include <codecvt>
 
 using namespace std;
 
@@ -26,6 +29,8 @@ namespace MyApp {
     void RenderUi();
     void makeWindowInput();
     void makeWindowDescompress();
+    void cleanChecked();
+    string OpenFileOrFolderDialog(bool selectFolders = false);
     static void checkboxFiles(string fileName);
 }
 

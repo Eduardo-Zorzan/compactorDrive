@@ -5,6 +5,7 @@
 
 
 namespace MainFrame {
+	int resultDecompression;
 	static vector<string> split(const string& str, const string& delimiter) {
 		regex regex(delimiter);
 		sregex_token_iterator it(str.begin(), str.end(), regex, -1);
@@ -100,9 +101,8 @@ namespace MainFrame {
 		string data = fileNameGlobal + " " + fixedFilePath + " " + nameImage + " " + fileNameGlobal + ".rar";
 		string resultStorage = storage::putFiles(data);
 		if (resultStorage != "File name already storaged") {
-			 Compactor::StartCompression(fixedFilePath, fileNameGlobal);
+			 Compactor::StartCompression(fixedFilePath, fileNameGlobal, deleteOrigin);
 		}
-		if (deleteOrigin) Compactor::deleteFile(fixedFilePath);
 		else return "r"; //review this shit, return isn't working
 	}
 
@@ -119,9 +119,7 @@ namespace MainFrame {
 	string descompressDeleteRegister(string filePath, vector<string> listToDescompress) {
 		string fixedPath = fixFilePath(filePath);
 		for (const auto& fileName : listToDescompress) {
-			if (Compactor::descompactFile(fileName, fixedPath) == "Failed to run command\n") {
-				return "something isn't right";
-			}
+			Compactor::StartDecompression(fileName, fixedPath);
 			storage::deleteFiles(fileName);
 		}
 		return " ";

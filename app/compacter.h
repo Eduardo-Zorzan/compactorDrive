@@ -11,10 +11,11 @@
 using namespace std;
 
 namespace Compactor {
-    void StartCompression(const std::string& filePath, const std::string& fileName);
+    void StartCompression(const string& filePath, const string& fileName, const bool deleteOrigin);
     static vector<string> split(const string& str, const string& delimiter);
     string checkProcess();
-    void compactFile(const std::string& filePath, const std::string& fileName);
-    string descompactFile(string fileName, string folderName);
+    void compactFile(const string& filePath, const string& fileName, const bool deleteOrigin);
+    void descompactFile(string fileName, string folderName);
+    void StartDecompression(const string& filePath, const string& fileName);
     string deleteFile(string fileName);
 }

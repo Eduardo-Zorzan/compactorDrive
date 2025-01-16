@@ -10,9 +10,9 @@
 
 using namespace std;
 
-std::atomic<bool> isRunning(false);      // Flag to track if the thread is active
-std::mutex outputMutex;                  // Mutex to protect shared output
-std::string threadOutput;                // Shared output from the thread
+atomic<bool> isRunning(false);      // Flag to track if the thread is active
+mutex outputMutex;                  // Mutex to protect shared output
+string threadOutput;                // Shared output from the thread
 
 namespace Compactor { 
     static vector<string> split(const string& str, const string& delimiter) {
@@ -21,9 +21,9 @@ namespace Compactor {
         return { it, {} };
     }
 
-    void compactFile(const std::string& filePath, const std::string& fileName)
+    void compactFile(const string& filePath, const string& fileName, const bool deleteOrigin)
     {
-        std::string fileCommand = "rar a -m5 -s -ep ../temporary/" + fileName + " " + filePath;
+        string fileCommand = "rar a -m5 -s -ep ../temporary/" + fileName + " " + filePath;
         FILE* pipe = _popen(fileCommand.c_str(), "r");
         if (!pipe)
         {
@@ -67,6 +67,7 @@ namespace Compactor {
         {
             isRunning = false;
         }
+        if (deleteOrigin) deleteFile(filePath);
     }
 
     string checkProcess() {
@@ -76,30 +77,77 @@ namespace Compactor {
         return "";
     }
 
-    void StartCompression(const std::string& filePath, const std::string& fileName)
+    void StartCompression(const std::string& filePath, const std::string& fileName, const bool deleteOrigin)
     {
         if (isRunning) {
             return;
         }// Prevent multiple threads from starting
         isRunning = true;
-        std::thread compressionThread(compactFile, filePath, fileName);
+        std::thread compressionThread(compactFile, filePath, fileName, deleteOrigin);
         compressionThread.detach(); // Detach the thread to let it run independently
         return;
     }
 
-    string descompactFile(string fileName, string folderName) {
+    void descompactFile(string fileName, string folderName) {
         const string deleteCommand = " & cd ../temporary/ & del " + fileName + ".rar";
         const string fileCommand = "rar x ../temporary/" + fileName + " " + folderName + deleteCommand;
         FILE* pipe = _popen(fileCommand.c_str(), "r");
-        if (!pipe) {
-            return "Failed to run command\n";
+        int foundAllOk = 0;
+        if (!pipe)
+        {
+            std::lock_guard<std::mutex> lock(outputMutex);
+            threadOutput = "Failed to run command\n";
+            isRunning = false;
+            return;
         }
-
+        int accumulator = 0;
         char buffer[128];
-        while (fgets(buffer, sizeof(buffer), pipe) != nullptr);
-        //if (buffer != "Done") return "Failed to run command\n";
-        return buffer;
+        std::ostringstream output;
+        std::string progress = " ";
+        while (fgets(buffer, sizeof(buffer), pipe) != nullptr)
+        {
+            {
+                output << buffer;
+                // Example: Display progress
+                std::string line(buffer);
+                cout << line;
+                if (line.find("OK") != string::npos) accumulator++;
+                if (line.find("ALL OK") != string::npos) foundAllOk = 1;
+                if (line.find("%") != string::npos)
+                {
+                    size_t percentPos = line.find('%');
+                    size_t startPos = line.find_last_of(" ", percentPos) + 1;
+                    if (startPos < percentPos)
+                    {
+                        progress = line.substr(startPos, percentPos - startPos);
+                        try
+                        {
+                            threadOutput = progress + " " + to_string(accumulator) + " " + to_string(foundAllOk);
+                            std::lock_guard<std::mutex> lock(outputMutex);
+                        }
+                        catch (string e)
+                        {
+                            cout << e << endl;
+                        }
+                    }
+                }
+            }
+        }
         _pclose(pipe);
+        {
+            isRunning = false;
+        }
+    }
+
+    void StartDecompression(const std::string& filePath, const std::string& fileName)
+    {
+        if (isRunning) {
+            return;
+        }// Prevent multiple threads from starting
+        isRunning = true;
+        std::thread decompressionThread(descompactFile, filePath, fileName);
+        decompressionThread.detach(); // Detach the thread to let it run independently
+        return;
     }
 
     string deleteFile(string fileName) {
