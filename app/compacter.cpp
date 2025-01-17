@@ -10,11 +10,11 @@
 
 using namespace std;
 
-atomic<bool> isRunning(false);      // Flag to track if the thread is active
-mutex outputMutex;                  // Mutex to protect shared output
-string threadOutput;                // Shared output from the thread
-
 namespace Compactor { 
+    atomic<bool> isRunning(false);      // Flag to track if the thread is active
+    mutex outputMutex;                  // Mutex to protect shared output
+    string threadOutput = "";                // Shared output from the thread
+
     static vector<string> split(const string& str, const string& delimiter) {
         regex regex(delimiter);
         sregex_token_iterator it(str.begin(), str.end(), regex, -1);
@@ -23,7 +23,7 @@ namespace Compactor {
 
     void compactFile(const string& filePath, const string& fileName, const bool deleteOrigin)
     {
-        string fileCommand = "rar a -m5 -s -ep ../temporary/" + fileName + " " + filePath;
+        string fileCommand = "rar a -m5 -s -ep \"../temporary/" + fileName + "\"" + " \"" + filePath + "\"";
         FILE* pipe = _popen(fileCommand.c_str(), "r");
         if (!pipe)
         {
@@ -89,8 +89,8 @@ namespace Compactor {
     }
 
     void descompactFile(string fileName, string folderName) {
-        const string deleteCommand = " & cd ../temporary/ & del " + fileName + ".rar";
-        const string fileCommand = "rar x ../temporary/" + fileName + " " + folderName + deleteCommand;
+        const string deleteCommand = " & cd \"../temporary/\" & del \"" + fileName + ".rar\"";
+        const string fileCommand = "rar x \"../temporary/" + fileName + "\"" + " \"" + folderName + "\"" + deleteCommand;
         FILE* pipe = _popen(fileCommand.c_str(), "r");
         int foundAllOk = 0;
         if (!pipe)
@@ -110,7 +110,6 @@ namespace Compactor {
                 output << buffer;
                 // Example: Display progress
                 std::string line(buffer);
-                cout << line;
                 if (line.find("OK") != string::npos) accumulator++;
                 if (line.find("ALL OK") != string::npos) foundAllOk = 1;
                 if (line.find("%") != string::npos)
@@ -139,15 +138,17 @@ namespace Compactor {
         }
     }
 
-    void StartDecompression(const std::string& filePath, const std::string& fileName)
+    void StartDecompression(const string& fileName, vector<string> listToDescompress)
     {
         if (isRunning) {
             return;
         }// Prevent multiple threads from starting
-        isRunning = true;
-        std::thread decompressionThread(descompactFile, filePath, fileName);
-        decompressionThread.detach(); // Detach the thread to let it run independently
-        return;
+        for (const auto& filePath : listToDescompress) {
+            isRunning = true;
+            std::thread decompressionThread(descompactFile, filePath, fileName);
+            decompressionThread.detach(); // Detach the thread to let it run independently
+            return;
+        }
     }
 
     string deleteFile(string fileName) {
@@ -164,7 +165,6 @@ namespace Compactor {
             }
             acumulator++;
         }
-        cout << fileCommand << endl;
         FILE* pipe = _popen(fileCommand.c_str(), "r");
         if (!pipe) {
             return "Failed to run command\n";

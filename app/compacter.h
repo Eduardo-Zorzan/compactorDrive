@@ -16,6 +16,6 @@ namespace Compactor {
     string checkProcess();
     void compactFile(const string& filePath, const string& fileName, const bool deleteOrigin);
     void descompactFile(string fileName, string folderName);
-    void StartDecompression(const string& filePath, const string& fileName);
+    void StartDecompression(const string& fileName, vector<string> listToDescompress);
     string deleteFile(string fileName);
 }

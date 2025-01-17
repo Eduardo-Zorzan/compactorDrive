@@ -11,7 +11,7 @@ namespace storage
 
     static returnObject separator(string rawData) {
         returnObject object;
-        vector<string> splitedData = split(rawData, " ");
+        vector<string> splitedData = split(rawData, "     ");
         object.nameFile = splitedData[0];
         object.pathFile = splitedData[1];
         object.nameImage = splitedData[2];
@@ -33,7 +33,7 @@ namespace storage
 
     static string getRawData() {
         ifstream fin;
-        fin.open("../README.txt");
+        fin.open("../storage.txt");
 
         if (!fin)
         {
@@ -59,7 +59,7 @@ namespace storage
     string getFiles(string nameFile)
     {
         ifstream fin;
-        fin.open("../README.txt");
+        fin.open("../storage.txt");
 
         if (!fin)
         {
@@ -70,7 +70,7 @@ namespace storage
 
         while (fin) {
             getline(fin, line);
-            vector<string> name = split(line, " ");
+            vector<string> name = split(line, "     ");
             if (nameFile == name[0]) return line;
         }
         fin.close();
@@ -80,7 +80,7 @@ namespace storage
 
     string putFiles(string data)
     {
-        vector<string> testName = split(data, " ");
+        vector<string> testName = split(data, "     ");
         if (getFiles(testName[0]) != "Error: file don't exist") {  
             return string("File name already storaged");
         }
@@ -88,7 +88,7 @@ namespace storage
         string allFiles = getRawData();
 
         ofstream fout;
-        fout.open("../README.txt");
+        fout.open("../storage.txt");
 
         if (!fout)
         {
@@ -112,7 +112,7 @@ namespace storage
 
         vector<string> splitedFile = split(allFiles, fileToDelete);
         ofstream fout;
-        fout.open("../README.txt");
+        fout.open("../storage.txt");
 
         if (!fout)
         {

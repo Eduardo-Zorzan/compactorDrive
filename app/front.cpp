@@ -13,6 +13,8 @@ bool stateDescompact = true;
 bool deleteOriginFiles = false;
 
 namespace MyApp {
+    int counter = 60;
+    vector<int> checkedProcess = {-1};
     char input[400] = "";
     char outputPath[400] = "";
     string inputResult;
@@ -125,7 +127,7 @@ namespace MyApp {
             ImGuiWindowFlags window_flags = 0;
             ImGuiIO& io = ImGui::GetIO();
             ImVec2 displaySize = io.DisplaySize;
-            float windowWidth = 700.0f;
+            float windowWidth = 750.0f;
             float windowHeight = 200.0f;
             float windowPositionX = ImGui::GetWindowPos().x;
             float windowPositionY = ImGui::GetWindowPos().y;
@@ -146,22 +148,28 @@ namespace MyApp {
             ImGui::InputText(" ", input, sizeof(input));
             ImGui::PopItemWidth;
             ImGui::SameLine();
-            if (ImGui::Button("OPEN")) {
-                inputResult = OpenFileOrFolderDialog(false);
-                strncpy(input, inputResult.c_str(), sizeof(input) - 1);
-            }
-            if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-            ImGui::NewLine;
             if (ImGui::Button("Compress")) {
                 string inputString = input;
                 MainFrame::compactRegister(inputString, deleteOriginFiles); // review this shit, return isn't working
                 stateUpload = true;
+                counter = 0;
+            }
+            if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+            ImGui::NewLine;
+            if (ImGui::Button("OPEN")) {
+                inputResult = OpenFileOrFolderDialog(false);
+                strncpy(input, inputResult.c_str(), sizeof(input) - 1);
+                input[400 - 1] = 0;
             }
             if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
             ImGui::NewLine;
             ImGui::Spacing();
             ImGui::Checkbox("Delete Origin Files?", &deleteOriginFiles);
             ImGui::End();
+        }
+        if (counter < 60) { //show the loading bar with fake progress for 60 frames to wait the multithreading start
+            checkedProcess = { 1, 0 };
+            counter++;
         }
     }
 
@@ -193,15 +201,16 @@ namespace MyApp {
             ImGui::InputText(" ", outputPath, sizeof(outputPath));
             ImGui::PopItemWidth;
             ImGui::SameLine();
-            if (ImGui::Button("OPEN")) {
-                outputPathResult = OpenFileOrFolderDialog(true);
-                strncpy(outputPath, outputPathResult.c_str(), sizeof(outputPath) - 1);
-            }
             if (ImGui::Button("Descompress")) {
                 string outputPathString = outputPath;
                 MainFrame::descompressDeleteRegister(outputPathString, checkedFiles);
                 stateDescompact = true;
                 cleanChecked();
+            }
+            if (ImGui::Button("OPEN")) {
+                outputPathResult = OpenFileOrFolderDialog(true);
+                strncpy(outputPath, outputPathResult.c_str(), sizeof(outputPath) - 1);
+                outputPath[400 - 1] = 0;
             }
             if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
             ImGui::NewLine;
@@ -241,8 +250,6 @@ namespace MyApp {
     }
 
     static void loadingBar() {
-        vector<int> checkedProcess = MainFrame::checkProcessing();
-
         if (checkedProcess[0] >= 0) {
             bool* p_open = NULL;
             ImGuiWindowFlags window_flags = 0;
@@ -275,7 +282,7 @@ namespace MyApp {
             ImGui::Spacing();
             ImGui::End();
         }
-  
+        checkedProcess = MainFrame::checkProcessing();
     }
 
     string OpenFileOrFolderDialog(bool selectFolders) {

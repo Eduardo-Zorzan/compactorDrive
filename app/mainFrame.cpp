@@ -98,7 +98,7 @@ namespace MainFrame {
 		string fileNameGlobal = treatedFileName[0];
 		string typeFile = treatedFileName[1];
 		string nameImage = defineImage(typeFile);
-		string data = fileNameGlobal + " " + fixedFilePath + " " + nameImage + " " + fileNameGlobal + ".rar";
+		string data = fileNameGlobal + "     " + fixedFilePath + "     " + nameImage + "     " + fileNameGlobal + ".rar";
 		string resultStorage = storage::putFiles(data);
 		if (resultStorage != "File name already storaged") {
 			 Compactor::StartCompression(fixedFilePath, fileNameGlobal, deleteOrigin);
@@ -108,8 +108,9 @@ namespace MainFrame {
 
 	vector<int> checkProcessing() {
 		string checked = Compactor::checkProcess();
+		vector<string> checkErrorInFormatation = split(checked, "\b");
 		if (checked != "") {
-			vector<string> treatedCheckedString = split(checked, " ");
+			vector<string> treatedCheckedString = split(checkErrorInFormatation[size(checkErrorInFormatation) - 1], " ");
 			vector<int> treatedCheckedInt = { stoi(treatedCheckedString[0]), stoi(treatedCheckedString[1]) };
 			return treatedCheckedInt;
 		}
@@ -119,9 +120,9 @@ namespace MainFrame {
 	string descompressDeleteRegister(string filePath, vector<string> listToDescompress) {
 		string fixedPath = fixFilePath(filePath);
 		for (const auto& fileName : listToDescompress) {
-			Compactor::StartDecompression(fileName, fixedPath);
 			storage::deleteFiles(fileName);
 		}
+		Compactor::StartDecompression(fixedPath, listToDescompress);
 		return " ";
 	}
 
