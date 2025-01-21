@@ -11,7 +11,7 @@
 using namespace std;
 
 namespace MainFrame {
-	const char* compactRegister (string filePath, bool deleteOrigin);
+	const char* compactRegister(vector<string> filePath, bool deleteOrigin);
 	static vector<string> split(const string& str, const string& delimiter);
 	static string fixFilePath(string filePath);
 	static vector<string> getFileName(string fixedPath);

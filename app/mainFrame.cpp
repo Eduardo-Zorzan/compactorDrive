@@ -92,17 +92,23 @@ namespace MainFrame {
 		return returnVector;
 	}
 
-	const char* compactRegister (string filePath, bool deleteOrigin) {
-		string fixedFilePath = fixFilePath(filePath);
-		vector<string> treatedFileName = getFileName(fixedFilePath);
-		string fileNameGlobal = treatedFileName[0];
-		string typeFile = treatedFileName[1];
-		string nameImage = defineImage(typeFile);
-		string data = fileNameGlobal + "     " + fixedFilePath + "     " + nameImage + "     " + fileNameGlobal + ".rar";
-		string resultStorage = storage::putFiles(data);
-		if (resultStorage != "File name already storaged") {
-			 Compactor::StartCompression(fixedFilePath, fileNameGlobal, deleteOrigin);
+	const char* compactRegister (vector<string> filePath, bool deleteOrigin) {
+		vector<string> fixedFilePath;
+		vector<string> fileName;
+		for (const auto& path : filePath) {
+			string fixed = fixFilePath(path);
+			vector<string> treatedFileName = getFileName(fixed);
+			string fileNameGlobal = treatedFileName[0];
+			string typeFile = treatedFileName[1];
+			string nameImage = defineImage(typeFile);
+			string data = fileNameGlobal + "     " + fixed + "     " + nameImage + "     " + fileNameGlobal + ".rar";
+			string resultStorage = storage::putFiles(data);
+			if (resultStorage != "File name already storaged") {
+				fixedFilePath.push_back(fixed);
+				fileName.push_back(fileNameGlobal);
+			}
 		}
+		if (fixedFilePath.size() > 0) Compactor::StartCompression(fixedFilePath, fileName, deleteOrigin);
 		else return "r"; //review this shit, return isn't working
 	}
 
@@ -131,6 +137,7 @@ namespace MainFrame {
 			if (Compactor::deleteFile("../temporary/" + fileName + ".rar") == "Failed to run command\n") {
 				return "something isn't right";
 			}
+			cout << fileName << endl;
 			storage::deleteFiles(fileName);
 		}
 		return " ";

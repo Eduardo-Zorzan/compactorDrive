@@ -118,8 +118,9 @@ namespace storage
         {
             return "Error, file don't open";
         }
-
-        string updatedFile = splitedFile[0] + splitedFile[1];
+        string updatedFile;
+        if (splitedFile.size() > 1) updatedFile = splitedFile[0] + splitedFile[1];
+        else updatedFile = splitedFile[0];
         fout << updatedFile << endl;
         fout.close();
 

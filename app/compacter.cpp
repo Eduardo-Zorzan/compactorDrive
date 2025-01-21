@@ -77,14 +77,18 @@ namespace Compactor {
         return "";
     }
 
-    void StartCompression(const std::string& filePath, const std::string& fileName, const bool deleteOrigin)
+    void StartCompression(const vector<string> filePath, const vector<string> fileName, const bool deleteOrigin)
     {
+        int accumulator = 0;
         if (isRunning) {
             return;
         }// Prevent multiple threads from starting
+        for (const auto& path: filePath) {
+            std::thread compressionThread(compactFile, path, fileName[accumulator], deleteOrigin);
+            compressionThread.detach(); // Detach the thread to let it run independently
+            accumulator++;
+        }
         isRunning = true;
-        std::thread compressionThread(compactFile, filePath, fileName, deleteOrigin);
-        compressionThread.detach(); // Detach the thread to let it run independently
         return;
     }
 
@@ -144,11 +148,11 @@ namespace Compactor {
             return;
         }// Prevent multiple threads from starting
         for (const auto& filePath : listToDescompress) {
-            isRunning = true;
             std::thread decompressionThread(descompactFile, filePath, fileName);
             decompressionThread.detach(); // Detach the thread to let it run independently
-            return;
         }
+        isRunning = true;
+        return;
     }
 
     string deleteFile(string fileName) {
@@ -161,7 +165,7 @@ namespace Compactor {
                 folderPath += folder + "/";
             }
             else {
-                fileCommand = "cd " + folderPath + " & del " + folder;
+                fileCommand = "cd \"" + folderPath + "\" & del \"" + folder + "\"";
             }
             acumulator++;
         }

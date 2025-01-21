@@ -13,11 +13,12 @@ bool stateDescompact = true;
 bool deleteOriginFiles = false;
 
 namespace MyApp {
-    int counter = 60;
+    int counter = 120;
     vector<int> checkedProcess = {-1};
     char input[400] = "";
     char outputPath[400] = "";
-    string inputResult;
+    vector<string> inputResult;
+    string temporaryResult;
     string outputPathResult;
     vector<GLuint> textureDelete;
     vector<string> checkedFiles;
@@ -149,16 +150,18 @@ namespace MyApp {
             ImGui::PopItemWidth;
             ImGui::SameLine();
             if (ImGui::Button("Compress")) {
-                string inputString = input;
-                MainFrame::compactRegister(inputString, deleteOriginFiles); // review this shit, return isn't working
+                MainFrame::compactRegister(inputResult, deleteOriginFiles); // review this shit, return isn't working
                 stateUpload = true;
                 counter = 0;
             }
             if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
             ImGui::NewLine;
             if (ImGui::Button("OPEN")) {
-                inputResult = OpenFileOrFolderDialog(false);
-                strncpy(input, inputResult.c_str(), sizeof(input) - 1);
+                inputResult = OpenFileOrFolderDialog(false, true);
+                for (const auto& path : inputResult) {
+                    temporaryResult += path + ";";
+                }
+                strncpy(input, temporaryResult.c_str(), sizeof(input) - 1);
                 input[400 - 1] = 0;
             }
             if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
@@ -167,7 +170,7 @@ namespace MyApp {
             ImGui::Checkbox("Delete Origin Files?", &deleteOriginFiles);
             ImGui::End();
         }
-        if (counter < 60) { //show the loading bar with fake progress for 60 frames to wait the multithreading start
+        if (counter < 120) { //show the loading bar with fake progress for 60 frames to wait the multithreading start
             checkedProcess = { 1, 0 };
             counter++;
         }
@@ -208,7 +211,7 @@ namespace MyApp {
                 cleanChecked();
             }
             if (ImGui::Button("OPEN")) {
-                outputPathResult = OpenFileOrFolderDialog(true);
+                outputPathResult = OpenFileOrFolderDialog(true, false)[0];
                 strncpy(outputPath, outputPathResult.c_str(), sizeof(outputPath) - 1);
                 outputPath[400 - 1] = 0;
             }
@@ -249,45 +252,52 @@ namespace MyApp {
         }
     }
 
-    static void loadingBar() {
+    void DrawLoadingSpinner(float radius, int segments, float speed) {
         if (checkedProcess[0] >= 0) {
             bool* p_open = NULL;
             ImGuiWindowFlags window_flags = 0;
             ImGuiIO& io = ImGui::GetIO();
             ImVec2 displaySize = io.DisplaySize;
 
-            float windowWidth = 750.0f;
-            float windowHeight = 200.0f;
             float windowPositionX = ImGui::GetWindowPos().x;
             float windowPositionY = ImGui::GetWindowPos().y;
-            float windowX = ((displaySize.x - windowWidth) / 2.0f) + windowPositionX;
-            float windowY = (((displaySize.y - windowHeight) / 2.0f) + windowPositionY) * 0.90f;
+            float windowX = (displaySize.x / 2.0f) + windowPositionX;
+            float windowY = ((displaySize.y / 2.0f) + windowPositionY) * 0.90f;
 
             window_flags |= ImGuiWindowFlags_NoTitleBar;
             window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
             window_flags |= ImGuiWindowFlags_NoMove;
+            window_flags |= ImGuiWindowFlags_NoDecoration;
+            window_flags |= ImGuiWindowFlags_NoMove;
+            window_flags |= ImGuiWindowFlags_NoSavedSettings;
 
-            ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight));
             ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2(displaySize.x, displaySize.y));
             ImGui::SetNextWindowFocus();
-            ImGui::Begin("LoadingBlock", p_open, window_flags);
-            float floatProgress = static_cast<float>(checkedProcess[0]);
-            floatProgress = floatProgress / 100;
-            if (floatProgress > 100) floatProgress = 1.0f;
-            string textLoading = to_string(checkedProcess[1]) + " Files processed";
-            if(checkedProcess[1] > 0) ImGui::Text("%s", textLoading.c_str());
-            const string progressString = to_string(floatProgress * 100) + "%";
+            ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(50, 50, 50, 255));
+            ImGui::Begin("loadingSpinner", p_open, window_flags);
+            ImDrawList* draw_list = ImGui::GetWindowDrawList();
+            ImVec2 pos = ImGui::GetCursorScreenPos();
+            float time = ImGui::GetTime();  // Get time for rotation
+            float angle_offset = time * speed;
 
-            ImGui::ProgressBar(floatProgress, ImVec2(600.0f, 0.0f), progressString.c_str());
-            ImGui::Spacing();
+            for (int i = 0; i < segments; i++) {
+                float angle = (i * (3.141 * 2.0f / segments)) + angle_offset;
+                float alpha = 1.0f - (float)i / segments;  // Fading effect
+
+                ImVec2 p1 = ImVec2(pos.x + std::cos(angle) * radius, pos.y + std::sin(angle) * radius);
+                draw_list->AddCircleFilled(p1, 2.0f, IM_COL32(255, 255, 255, (int)(alpha * 255)));
+            }
             ImGui::End();
+            ImGui::PopStyleColor();
         }
         checkedProcess = MainFrame::checkProcessing();
+
     }
 
-    string OpenFileOrFolderDialog(bool selectFolders) {
+    vector<string> OpenFileOrFolderDialog(bool selectFolders, bool allowMultipleFiles) {
         HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
-        std::string result;
+        std::vector<std::string> result; // Store multiple results (file paths)
         if (SUCCEEDED(hr)) {
             IFileOpenDialog* pFileOpen = NULL;
 
@@ -301,25 +311,38 @@ namespace MyApp {
                     if (selectFolders) {
                         options |= FOS_PICKFOLDERS; // Enable folder selection
                     }
+                    if (allowMultipleFiles) {
+                        options |= FOS_ALLOWMULTISELECT; // Allow multiple file selection
+                    }
                     pFileOpen->SetOptions(options); // Apply the options
                 }
 
                 // Show the dialog box
                 hr = pFileOpen->Show(NULL);
                 if (SUCCEEDED(hr)) {
-                    // Get the selected item (file or folder)
-                    IShellItem* pItem;
-                    hr = pFileOpen->GetResult(&pItem);
+                    // Get the selected items (files or folders)
+                    IShellItemArray* pItems = NULL;
+                    hr = pFileOpen->GetResults(&pItems);
                     if (SUCCEEDED(hr)) {
-                        PWSTR pszFilePath;
-                        hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
-                        if (SUCCEEDED(hr)) {
-                            // Convert wide string (PWSTR) to std::string (UTF-8)
-                            std::wstring filePathW(pszFilePath);
-                            result = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(filePathW);
-                            CoTaskMemFree(pszFilePath); // Free memory allocated for pszFilePath
+                        DWORD itemCount = 0;
+                        pItems->GetCount(&itemCount); // Get the number of selected items
+
+                        for (DWORD i = 0; i < itemCount; ++i) {
+                            IShellItem* pItem;
+                            hr = pItems->GetItemAt(i, &pItem);
+                            if (SUCCEEDED(hr)) {
+                                PWSTR pszFilePath;
+                                hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+                                if (SUCCEEDED(hr)) {
+                                    // Convert wide string (PWSTR) to std::string (UTF-8)
+                                    std::wstring filePathW(pszFilePath);
+                                    result.push_back(std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(filePathW));
+                                    CoTaskMemFree(pszFilePath); // Free memory allocated for pszFilePath
+                                }
+                                pItem->Release();
+                            }
                         }
-                        pItem->Release();
+                        pItems->Release();
                     }
                 }
                 pFileOpen->Release();
@@ -334,7 +357,7 @@ namespace MyApp {
         adjustFont();
         makepWindow();
         menuBar();
-        loadingBar();
+        DrawLoadingSpinner(200.0f, 12, 2.00f);
         makeFiles();
         ImGui::End();
     }

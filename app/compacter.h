@@ -11,7 +11,7 @@
 using namespace std;
 
 namespace Compactor {
-    void StartCompression(const string& filePath, const string& fileName, const bool deleteOrigin);
+    void StartCompression(const vector<string> filePath, const vector<string> fileName, const bool deleteOrigin);
     static vector<string> split(const string& str, const string& delimiter);
     string checkProcess();
     void compactFile(const string& filePath, const string& fileName, const bool deleteOrigin);

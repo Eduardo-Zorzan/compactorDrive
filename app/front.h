@@ -11,6 +11,7 @@
 #include <shobjidl.h>
 #include <locale>
 #include <codecvt>
+#include <cmath>
 
 using namespace std;
 
@@ -19,10 +20,10 @@ namespace MyApp {
         string fileName;
         ImTextureID imageTexture;
     };
-    static void loadingBar();
     ImTextureID LoadImage(const string filePath);
     ImGuiWindowFlags makepWindow();
     static void makeFiles();
+    void DrawLoadingSpinner(float radius, int segments, float speed);
     void menuBar();
     void adjustFont();
     void freeTexture();
@@ -30,7 +31,7 @@ namespace MyApp {
     void makeWindowInput();
     void makeWindowDescompress();
     void cleanChecked();
-    string OpenFileOrFolderDialog(bool selectFolders = false);
+    vector<string> OpenFileOrFolderDialog(bool selectFolders, bool allowMultipleFiles);
     static void checkboxFiles(string fileName);
 }
 
