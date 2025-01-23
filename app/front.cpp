@@ -13,6 +13,7 @@ bool stateDescompact = true;
 bool deleteOriginFiles = false;
 
 namespace MyApp {
+    bool isRunning = false;
     int counter = 120;
     vector<int> checkedProcess = {-1};
     char input[400] = "";
@@ -146,17 +147,21 @@ namespace MyApp {
             ImGui::Text("%s", "SELECT THE FILE PATH TO COMPACT:");
             ImGui::Spacing();
             ImGui::PushItemWidth(600);
+            ImGui::BeginDisabled();
             ImGui::InputText(" ", input, sizeof(input));
+            ImGui::EndDisabled();
             ImGui::PopItemWidth;
             ImGui::SameLine();
             if (ImGui::Button("Compress")) {
                 MainFrame::compactRegister(inputResult, deleteOriginFiles); // review this shit, return isn't working
                 stateUpload = true;
                 counter = 0;
+                temporaryResult = "";
             }
             if (ImGui::IsItemHovered()) ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
             ImGui::NewLine;
             if (ImGui::Button("OPEN")) {
+                temporaryResult = "";
                 inputResult = OpenFileOrFolderDialog(false, true);
                 for (const auto& path : inputResult) {
                     temporaryResult += path + ";";
@@ -169,10 +174,6 @@ namespace MyApp {
             ImGui::Spacing();
             ImGui::Checkbox("Delete Origin Files?", &deleteOriginFiles);
             ImGui::End();
-        }
-        if (counter < 120) { //show the loading bar with fake progress for 60 frames to wait the multithreading start
-            checkedProcess = { 1, 0 };
-            counter++;
         }
     }
 
@@ -209,6 +210,7 @@ namespace MyApp {
                 MainFrame::descompressDeleteRegister(outputPathString, checkedFiles);
                 stateDescompact = true;
                 cleanChecked();
+                counter = 0;
             }
             if (ImGui::Button("OPEN")) {
                 outputPathResult = OpenFileOrFolderDialog(true, false)[0];
@@ -258,24 +260,23 @@ namespace MyApp {
             ImGuiWindowFlags window_flags = 0;
             ImGuiIO& io = ImGui::GetIO();
             ImVec2 displaySize = io.DisplaySize;
-
+            ImVec2 windowSize = ImGui::GetWindowSize();
             float windowPositionX = ImGui::GetWindowPos().x;
             float windowPositionY = ImGui::GetWindowPos().y;
-            float windowX = (displaySize.x / 2.0f) + windowPositionX;
-            float windowY = ((displaySize.y / 2.0f) + windowPositionY) * 0.90f;
+            float windowX = (windowSize.x/ 2.0f);
+            float windowY = (windowSize.y / 2.0f) * 0.95;
 
             window_flags |= ImGuiWindowFlags_NoTitleBar;
             window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
             window_flags |= ImGuiWindowFlags_NoMove;
             window_flags |= ImGuiWindowFlags_NoDecoration;
-            window_flags |= ImGuiWindowFlags_NoMove;
-            window_flags |= ImGuiWindowFlags_NoSavedSettings;
 
-            ImGui::SetNextWindowPos(ImVec2(windowX, windowY), ImGuiCond_Always);
-            ImGui::SetNextWindowSize(ImVec2(displaySize.x, displaySize.y));
+            ImGui::SetNextWindowPos(ImVec2(windowPositionX, windowPositionY));
+            ImGui::SetNextWindowSize(ImVec2(windowSize.x, windowSize.y));
             ImGui::SetNextWindowFocus();
-            ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(50, 50, 50, 255));
+            ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(50, 50, 50, 100));
             ImGui::Begin("loadingSpinner", p_open, window_flags);
+            ImGui::SetCursorPos(ImVec2(windowX, windowY));
             ImDrawList* draw_list = ImGui::GetWindowDrawList();
             ImVec2 pos = ImGui::GetCursorScreenPos();
             float time = ImGui::GetTime();  // Get time for rotation
@@ -286,13 +287,16 @@ namespace MyApp {
                 float alpha = 1.0f - (float)i / segments;  // Fading effect
 
                 ImVec2 p1 = ImVec2(pos.x + std::cos(angle) * radius, pos.y + std::sin(angle) * radius);
-                draw_list->AddCircleFilled(p1, 2.0f, IM_COL32(255, 255, 255, (int)(alpha * 255)));
+                draw_list->AddCircleFilled(p1, 8.0f, IM_COL32(255, 255, 255, (int)(alpha * 255)));
             }
             ImGui::End();
             ImGui::PopStyleColor();
         }
+        if (counter < 120) { //show the loading bar with fake progress for 60 frames to wait the multithreading start
+            checkedProcess = { 1, 0 };
+            counter++;
+        }
         checkedProcess = MainFrame::checkProcessing();
-
     }
 
     vector<string> OpenFileOrFolderDialog(bool selectFolders, bool allowMultipleFiles) {
@@ -356,8 +360,8 @@ namespace MyApp {
     {   
         adjustFont();
         makepWindow();
+        DrawLoadingSpinner(75.0f, 20, 2.00f);
         menuBar();
-        DrawLoadingSpinner(200.0f, 12, 2.00f);
         makeFiles();
         ImGui::End();
     }

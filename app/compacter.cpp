@@ -84,7 +84,7 @@ namespace Compactor {
             return;
         }// Prevent multiple threads from starting
         for (const auto& path: filePath) {
-            std::thread compressionThread(compactFile, path, fileName[accumulator], deleteOrigin);
+            thread compressionThread(compactFile, path, fileName[accumulator], deleteOrigin);
             compressionThread.detach(); // Detach the thread to let it run independently
             accumulator++;
         }
