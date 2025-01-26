@@ -1,8 +1,0 @@
-C:/Users/Duduz/OneDrive/Área de Trabalho/programação/projetos/compacterDrive/app/vcpkg_installed/vcpkg/blds/fmt/x64-windows-dbg/CMakeFiles/fmt.dir
-C:/Users/Duduz/OneDrive/Área de Trabalho/programação/projetos/compacterDrive/app/vcpkg_installed/vcpkg/blds/fmt/x64-windows-dbg/CMakeFiles/package.dir
-C:/Users/Duduz/OneDrive/Área de Trabalho/programação/projetos/compacterDrive/app/vcpkg_installed/vcpkg/blds/fmt/x64-windows-dbg/CMakeFiles/package_source.dir
-C:/Users/Duduz/OneDrive/Área de Trabalho/programação/projetos/compacterDrive/app/vcpkg_installed/vcpkg/blds/fmt/x64-windows-dbg/CMakeFiles/edit_cache.dir
-C:/Users/Duduz/OneDrive/Área de Trabalho/programação/projetos/compacterDrive/app/vcpkg_installed/vcpkg/blds/fmt/x64-windows-dbg/CMakeFiles/rebuild_cache.dir
-C:/Users/Duduz/OneDrive/Área de Trabalho/programação/projetos/compacterDrive/app/vcpkg_installed/vcpkg/blds/fmt/x64-windows-dbg/CMakeFiles/list_install_components.dir
-C:/Users/Duduz/OneDrive/Área de Trabalho/programação/projetos/compacterDrive/app/vcpkg_installed/vcpkg/blds/fmt/x64-windows-dbg/CMakeFiles/install.dir
-C:/Users/Duduz/OneDrive/Área de Trabalho/programação/projetos/compacterDrive/app/vcpkg_installed/vcpkg/blds/fmt/x64-windows-dbg/CMakeFiles/install/local.dir
