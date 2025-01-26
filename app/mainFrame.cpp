@@ -6,13 +6,13 @@
 
 namespace MainFrame {
 	int resultDecompression;
-	static vector<string> split(const string& str, const string& delimiter) {
+	static vector<string> split(const string& str, const string& delimiter) { //function to split string in vector
 		regex regex(delimiter);
 		sregex_token_iterator it(str.begin(), str.end(), regex, -1);
 		return { it, {} };
 	}
 
-	static string fixFilePath(string filePath) {
+	static string fixFilePath(string filePath) { // adjust the file path string origined by windows explorer API to run winrar commands
 		string fixedFilePath = "";
 		for (const auto& character : filePath) {
 			if (character == '\\') fixedFilePath += "/";
@@ -22,7 +22,7 @@ namespace MainFrame {
 		return fixedFilePath;
 	}
 
-	static string defineImage(string typeFile) {
+	static string defineImage(string typeFile) { //define what icon shows depending on type file
 		transform(typeFile.begin(), typeFile.end(), typeFile.begin(), //Transform typeFile in Lowercase
 		[](unsigned char c) { return std::tolower(c); });
 		unordered_map<string, string> hashImages = {
@@ -60,7 +60,7 @@ namespace MainFrame {
 		return "unknown.png";
 	}
 
-	static vector<string> getFileName(string fixedPath) {
+	static vector<string> getFileName(string fixedPath) { //get file name from full path
 		string fileNameGlobal = "";
 		string folderPath;
 		string typeFile = "";
@@ -92,7 +92,7 @@ namespace MainFrame {
 		return returnVector;
 	}
 
-	const char* compactRegister (vector<string> filePath, bool deleteOrigin) {
+	const char* compactRegister (vector<string> filePath, bool deleteOrigin) {//run the compress function winrar and the delete function from storage
 		vector<string> fixedFilePath;
 		vector<string> fileName;
 		for (const auto& path : filePath) {
@@ -112,7 +112,7 @@ namespace MainFrame {
 		else return "r"; //review this shit, return isn't working
 	}
 
-	vector<int> checkProcessing() {
+	vector<int> checkProcessing() {//check if the second thread processor finished the process
 		string checked = Compactor::checkProcess();
 		vector<string> checkErrorInFormatation = split(checked, "\b");
 		if (checked != "") {
@@ -123,7 +123,7 @@ namespace MainFrame {
 		return { -1 };
 	}
 
-	string descompressDeleteRegister(string filePath, vector<string> listToDescompress) {
+	string descompressDeleteRegister(string filePath, vector<string> listToDescompress) {//run the descompress function and the delete function from storage
 		string fixedPath = fixFilePath(filePath);
 		for (const auto& fileName : listToDescompress) {
 			storage::deleteFiles(fileName);
@@ -132,7 +132,7 @@ namespace MainFrame {
 		return " ";
 	}
 
-	string delteFileAndRegister(vector<string> filesToDelete) {
+	string delteFileAndRegister(vector<string> filesToDelete) {//run the delete function in compressed files and in the storage
 		for (const auto& fileName : filesToDelete) {
 			if (Compactor::deleteFile("../temporary/" + fileName + ".rar") == "Failed to run command\n") {
 				return "something isn't right";

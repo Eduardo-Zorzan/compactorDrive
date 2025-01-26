@@ -98,13 +98,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\README.txt" />
-    <None Include="..\vcpkg.json" />
-    <None Include="..\vcpkg-configuration.json" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Roboto-Regular.ttf">
       <Filter>sources</Filter>
     </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="storage.txt">
+      <Filter>sources</Filter>
+    </Text>
   </ItemGroup>
 </Project>

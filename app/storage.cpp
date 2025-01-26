@@ -3,13 +3,13 @@
 
 namespace storage
 {
-    vector<string> split(const string& str, const string& delimiter) {
-        regex regex(delimiter);
+    vector<string> split(const string& str, const string& delimiter) { //function to split string in vector
+        regex regex(regex_replace(delimiter, regex(R"([.^$|(){}\[\]+*?\\])"), R"(\$&)")); //Escaping special characters for delete work properly
         sregex_token_iterator it(str.begin(), str.end(), regex, -1);
         return { it, {} };
     }
 
-    static returnObject separator(string rawData) {
+    static returnObject separator(string rawData) { //separate the raw data from storage.txt to an object
         returnObject object;
         vector<string> splitedData = split(rawData, "     ");
         object.nameFile = splitedData[0];
@@ -19,7 +19,7 @@ namespace storage
         return object;
     }
 
-    static vector<returnObject> objectVector(string allRawData) {
+    static vector<returnObject> objectVector(string allRawData) { //take the raw data and convert to a vector with the data separated on an object
         vector<returnObject> vectorObject;
         vector<string> separatedData = split(allRawData, "\n");
         for (const auto& data : separatedData) {
@@ -31,9 +31,9 @@ namespace storage
         return vectorObject;
     }
 
-    static string getRawData() {
+    static string getRawData() { //take raw data from storage.txt
         ifstream fin;
-        fin.open("../storage.txt");
+        fin.open("./storage.txt");
 
         if (!fin)
         {
@@ -50,16 +50,16 @@ namespace storage
         return temporary;
     }
 
-    vector<returnObject> getAllFiles() {
+    vector<returnObject> getAllFiles() {// runs getRawData and obejectVector
         string temporary = getRawData();
         vector<returnObject> treatedTemporary = objectVector(temporary);
         return treatedTemporary;
     }
 
-    string getFiles(string nameFile)
+    string getFiles(string nameFile)// get raw data of one file by nameFile
     {
         ifstream fin;
-        fin.open("../storage.txt");
+        fin.open("./storage.txt");
 
         if (!fin)
         {
@@ -78,7 +78,7 @@ namespace storage
 
     }
 
-    string putFiles(string data)
+    string putFiles(string data) //put files on storage.txt and test if the file it's already in storage.txt
     {
         vector<string> testName = split(data, "     ");
         if (getFiles(testName[0]) != "Error: file don't exist") {  
@@ -88,7 +88,7 @@ namespace storage
         string allFiles = getRawData();
 
         ofstream fout;
-        fout.open("../storage.txt");
+        fout.open("./storage.txt");
 
         if (!fout)
         {
@@ -102,17 +102,17 @@ namespace storage
         return string("file writed with success");
     }
 
-    string deleteFiles(string nameFile)
+    string deleteFiles(string nameFile)//delete one file from storage.txt by the file name
     {
         string allFiles = getRawData();
         string fileToDelete = getFiles(nameFile);
         if (fileToDelete == "Error: file don't exist") {
-            return fileToDelete;
+            cerr << fileToDelete + "File .rar don't created" << endl;
         }
 
         vector<string> splitedFile = split(allFiles, fileToDelete);
         ofstream fout;
-        fout.open("../storage.txt");
+        fout.open("./storage.txt");
 
         if (!fout)
         {

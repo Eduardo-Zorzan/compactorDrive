@@ -23,7 +23,7 @@ namespace MyApp {
     string outputPathResult;
     vector<GLuint> textureDelete;
     vector<string> checkedFiles;
-    ImTextureID LoadImage(const string fileName) {
+    ImTextureID LoadImage(const string fileName) {//load the icons images with GLFW
         const string& filePath = "../images/" + fileName;
         int width, height, channels;
         unsigned char* data = stbi_load(filePath.c_str(), &width, &height, &channels, 0);
@@ -53,11 +53,11 @@ namespace MyApp {
         cerr << "nullptr" << endl;  // If loading failed
     }
 
-    void cleanChecked() {
+    void cleanChecked() { //clean the vector of checkedFiles
         checkedFiles = {};
     }
 
-    ImGuiWindowFlags makepWindow()
+    ImGuiWindowFlags makepWindow() //define the flags of the main window
     {
         bool* p_open = NULL;
         ImGuiWindowFlags window_flags = 0;
@@ -75,7 +75,7 @@ namespace MyApp {
         return window_flags;
     }
 
-    static void checkboxFiles(string fileName) {
+    static void checkboxFiles(string fileName) {// make the checkboxs and add to checkedFiles vector the files checked
         bool checkedFile = false;
         bool checkFileAlreadyInVector = false;
         for (const auto& fileSelected : checkedFiles) {
@@ -93,7 +93,7 @@ namespace MyApp {
         };
     }
 
-    static void makeFiles() {
+    static void makeFiles() { //render the icons of the files in main window
         ImGuiIO& io = ImGui::GetIO();
         ImVec2 childSize = ImVec2(100.0f, 200.0f);
         static vector<returnObject> files;
@@ -123,7 +123,7 @@ namespace MyApp {
         ImGui::EndChild();
     }
 
-    void makeWindowInput() {
+    void makeWindowInput() {//make the input modal and call the mainFrame functions to compress files
         if (!stateUpload) {
             bool* p_open = NULL;
             ImGuiWindowFlags window_flags = 0;
@@ -177,7 +177,7 @@ namespace MyApp {
         }
     }
 
-    void makeWindowDescompress() {
+    void makeWindowDescompress() {//make the descompress modal and call the mainFrame functions to descompress files
         if (!stateDescompact) {
             bool* p_open = NULL;
             ImGuiWindowFlags window_flags = 0;
@@ -224,7 +224,7 @@ namespace MyApp {
         }
     }
 
-    void menuBar()
+    void menuBar() //make the top menu bar
     {
        if (ImGui::BeginMainMenuBar())
        {
@@ -243,18 +243,18 @@ namespace MyApp {
        makeWindowDescompress();
     }
 
-    void adjustFont() {
+    void adjustFont() { //adjust font
         ImGuiIO& io = ImGui::GetIO();
         io.FontGlobalScale = 1.25f;
     }
 
-    void freeTexture() {
+    void freeTexture() {//functio to free the texture memory, it's call just in the main file
         for (const auto& textures : textureDelete) {
             glDeleteTextures(1, &textures);
         }
     }
 
-    void DrawLoadingSpinner(float radius, int segments, float speed) {
+    void DrawLoadingSpinner(float radius, int segments, float speed) { //make the loading spinner
         if (checkedProcess[0] >= 0) {
             bool* p_open = NULL;
             ImGuiWindowFlags window_flags = 0;
@@ -292,14 +292,14 @@ namespace MyApp {
             ImGui::End();
             ImGui::PopStyleColor();
         }
-        if (counter < 120) { //show the loading bar with fake progress for 60 frames to wait the multithreading start
+        if (counter < 120) { //show the loading bar with fake progress for 120 frames to wait the multithreading start
             checkedProcess = { 1, 0 };
             counter++;
         }
         checkedProcess = MainFrame::checkProcessing();
     }
 
-    vector<string> OpenFileOrFolderDialog(bool selectFolders, bool allowMultipleFiles) {
+    vector<string> OpenFileOrFolderDialog(bool selectFolders, bool allowMultipleFiles) {//integrate API Windows Explorer
         HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
         std::vector<std::string> result; // Store multiple results (file paths)
         if (SUCCEEDED(hr)) {
@@ -356,7 +356,7 @@ namespace MyApp {
         return result;
     }
 
-    void RenderUi()
+    void RenderUi()//call the important functions in the correct order
     {   
         adjustFont();
         makepWindow();

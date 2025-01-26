@@ -15,12 +15,13 @@ namespace Compactor {
     mutex outputMutex;                  // Mutex to protect shared output
     string threadOutput = "";                // Shared output from the thread
 
-    static vector<string> split(const string& str, const string& delimiter) {
-        regex regex(delimiter);
+    static vector<string> split(const string& str, const string& delimiter) { //function to split string in vector
+        regex regex(regex_replace(delimiter, regex(R"([.^$|(){}\[\]+*?\\])"), R"(\$&)")); //Escaping special characters for delete work properly
         sregex_token_iterator it(str.begin(), str.end(), regex, -1);
         return { it, {} };
     }
 
+    //use winrar commands directly on terminal to compress files
     void compactFile(const string& filePath, const string& fileName, const bool deleteOrigin)
     {
         string fileCommand = "rar a -m5 -s -ep \"../temporary/" + fileName + "\"" + " \"" + filePath + "\"";
@@ -40,7 +41,6 @@ namespace Compactor {
         {
             {
                 output << buffer;
-                // Example: Display progress
                 std::string line(buffer);
                 if (line.find("OK") != string::npos) accumulator++;
                 if (line.find("%") != std::string::npos)
@@ -53,7 +53,7 @@ namespace Compactor {
                         try
                         {
                             threadOutput = progress + " " + to_string(accumulator);
-                            std::lock_guard<std::mutex> lock(outputMutex);
+                            std::lock_guard<std::mutex> lock(outputMutex); //protect the output of second thread process
                         }
                         catch (string e)
                         {
@@ -70,13 +70,13 @@ namespace Compactor {
         if (deleteOrigin) deleteFile(filePath);
     }
 
-    string checkProcess() {
+    string checkProcess() { //return the progress of the second thread process when process it's running
         if (isRunning) {
             return threadOutput;
         }
         return "";
     }
-
+    //start the multithreading process of compression
     void StartCompression(const vector<string> filePath, const vector<string> fileName, const bool deleteOrigin)
     {
         int accumulator = 0;
@@ -92,6 +92,7 @@ namespace Compactor {
         return;
     }
 
+    //use winrar commands directly on terminal to compress files
     void descompactFile(string fileName, string folderName) {
         const string deleteCommand = " & cd \"../temporary/\" & del \"" + fileName + ".rar\"";
         const string fileCommand = "rar x \"../temporary/" + fileName + "\"" + " \"" + folderName + "\"" + deleteCommand;
@@ -142,6 +143,7 @@ namespace Compactor {
         }
     }
 
+    //start the multithreading process of descompression
     void StartDecompression(const string& fileName, vector<string> listToDescompress)
     {
         if (isRunning) {
@@ -155,6 +157,7 @@ namespace Compactor {
         return;
     }
 
+    //runs a delete command directly on terminal
     string deleteFile(string fileName) {
         vector<string> splitedFileName = split(fileName, "/");
         string folderPath;
